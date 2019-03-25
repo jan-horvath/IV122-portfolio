@@ -6,7 +6,7 @@
 	<title>IV122 portfolio</title>
 	<style type="text/css">
 		html, #page { padding:0; margin:0;}
-		body { margin:0; padding:0; width:100%; color:#959595; font:normal 12px/2.0em Sans-Serif;} 
+		body { margin:0; padding:0; width:100%; color:#000000; font:normal 12px/2.0em Sans-Serif;} 
 		h1, h2, h3, h4, h5, h6 {color:darkblue;}
 		#page { background:#eee;}
 		#header, #footer, #top-nav, #content, #content #contentbar, #content #sidebar { margin:0; padding:0;}
@@ -55,6 +55,8 @@
 		#footer-inner { margin:auto; text-align:center; padding:12px; width:970px;}
 		#footer a {color:blue;text-decoration:none;}
 		
+		.boxed {border: 1px solid gray;}
+		
 		/* Clear both sides to assist with div alignment  */
 		.clr { clear:both; padding:0; margin:0; width:100%; font-size:0px; line-height:0px;}
 	</style>
@@ -97,43 +99,125 @@
 				<main id="contentbar">
 					<h3>Graphics test</h3>
 					<pre>
-cv::Mat Bpng(1000, 1000, CV_16UC3, cv::Scalar(52000, 52000, 52000));
-	for (size_t i = 0; i < Bpng.cols; ++i) {
-	for (size_t j = 0; j < Bpng.rows; ++j) {
-		Bpng.at<cv::Vec3w>(j,i) = cv::Vec3w(j*65535/1000, 0, i*65535/1000);
+					<div class="boxed">
+	cv::Mat Bpng(1000, 1000, CV_16UC3, cv::Scalar(52000, 52000, 52000));
+		for (size_t i = 0; i < Bpng.cols; ++i) {
+		for (size_t j = 0; j < Bpng.rows; ++j) {
+			Bpng.at<cv::Vec3w>(j,i) = cv::Vec3w(j*65535/1000, 0, i*65535/1000);
+		}
 	}
-}
-					</pre>
+					</div></pre>
 					<img src="Results/Taskset1/task1B.png" width="300" height="300" alt="AAAA">
 					
 					<pre>
-void drawLadder(Point A, Point B, Point C, Point D, SVGFile& svgFile, double frequency = 0) {
-	svgFile.addLine(A, B, COLORS[0], true);
-	svgFile.addLine(C, D, COLORS[0], true);
+					<div class="boxed">
+	void drawLadder(Point A, Point B, Point C, Point D, SVGFile& svgFile, double frequency = 0) {
+		svgFile.addLine(A, B, COLORS[0], true);
+		svgFile.addLine(C, D, COLORS[0], true);
 
-	double lambda = 0.0;
-	while (lambda < 1.0) {
-		svgFile.addLine(A + ((B - A) * lambda), C + ((D - C) * lambda), COLORS[0], true);
-		if (frequency != 0) {
+		double lambda = 0.0;
+		while (lambda < 1.0) {
+			svgFile.addLine(A + ((B - A) * lambda), C + ((D - C) * lambda), COLORS[0], true);
 			lambda += frequency;
-		} else {
-			//TODO add random increment
+		}
+		svgFile.addLine(B, D, COLORS[0], true);
+	}
+
+	void drawStar(SVGFile& svgFile, unsigned starPoints, double frequency = 0) {
+		for (size_t i = 0; i < starPoints; ++i) {
+			Point A = {cos(2*M_PI/starPoints * i), sin(2*M_PI/starPoints * i)};
+			Point B = {cos(2*M_PI/starPoints * (i+1)), sin(2*M_PI/starPoints * (i+1))};
+			drawLadder({0.0, 0.0}, A, B, {0.0,0.0}, svgFile, frequency);
 		}
 	}
-	svgFile.addLine(B, D, COLORS[0], true);
-}
-
-void drawStar(SVGFile& svgFile, unsigned starPoints, double frequency = 0) {
-	for (size_t i = 0; i < starPoints; ++i) {
-		Point A = {cos(2*M_PI/starPoints * i), sin(2*M_PI/starPoints * i)};
-		Point B = {cos(2*M_PI/starPoints * (i+1)), sin(2*M_PI/starPoints * (i+1))};
-		drawLadder({0.0, 0.0}, A, B, {0.0,0.0}, svgFile, frequency);
-	}
-}
-					</pre>
+					<div class="boxed"></pre>
 					<embed src="Results/Taskset1/task1B.svg" width="300" height="300">
 					
+					<h3>Ulam's spiral</h3>
+					Ulam's spiral with prime numbers. The commented part marks divisors of a number, instead of primes.
+					<pre>
+					<div class="boxed">
+	void generateUlamsSpiral(SVGFile& svgFile, unsigned n, unsigned pixelRadius, double spacing = 0.02) {
+		Point A = {0,0};
+		Point B = {1,0};
+		svgFile.addLine({A.X*spacing, A.Y*spacing}, {B.X*spacing, B.Y*spacing}, COLORS[0], true);
+		A = B;
+		for (size_t i = 2; i < n; ++i) {
+			unsigned checkCount = 0;
+			if ((A.X >= A.Y+1) && (A.Y > -A.X)) {B = {B.X, B.Y-1}; ++checkCount;}
+			if ((A.Y <= -A.X) && (A.X > A.Y)) {B = {B.X-1, B.Y}; ++checkCount;}
+			if ((A.X <= A.Y) && (A.Y < -A.X)) {B = {B.X, B.Y+1}; ++checkCount;}
+			if ((A.Y >= -A.X) && (A.Y+1 > A.X)) {B = {B.X+1, B.Y}; ++checkCount;}
+
+			assert(checkCount == 1);
+
+			svgFile.addLine({A.X*spacing, A.Y*spacing}, {B.X*spacing, B.Y*spacing}, COLORS[0], true);
+
+			/*if (i % 5 == 0) {
+				svgFile.addCircle({A.X * spacing, A.Y * spacing}, pixelRadius, true, true);
+			}*/
+
+			if (isPrime(i)) {
+				svgFile.addCircle({A.X * spacing, A.Y * spacing}, pixelRadius, true, COLORS[0], true);
+			}
+
+			A = B;
+		}
+	}
+					</div>
+					</pre>
+					<embed src="Results/Taskset1/task1C.svg" width="350" height="350">
+					
+					<h3>GCD visualization (Euclidean algorithm)</h3>
+					Red color means more steps were taken. Left picture shows steps to compute GCD using faster (modulo) method. Right picture shows the slower (subtraction) method. The intesity of the red color was scaled differently in both pictures so there the the same intesity does not mean the same number of steps (when comparing the picture to each other).
+					
+					<pre>
+					<div class="boxed">
+	unsigned gcdFast(unsigned a, unsigned b, unsigned &steps) {
+		if (a % b == 0) return b;
+		return gcdFast(b, a % b, ++steps);
+	}
+
+	unsigned gcdSlow(unsigned a, unsigned b, unsigned &steps) {
+		if (a < b) {
+			auto tmp = a;
+			a = b;
+			b = tmp;
+		}
+
+		if (a - b == 0) return b;
+		return gcdSlow(a - b, b, ++steps);
+	}
+	
+	void gcdViz(unsigned upto, bool fast = true) {
+		unsigned steps = 0;
+		const unsigned MAX_COL = 65535;
+		cv::Mat gcdGraph(upto, upto, CV_16UC3, cv::Scalar(MAX_COL, MAX_COL, MAX_COL));
+
+		unsigned STEP_COL_RATIO = MAX_COL/sqrt(upto);
+		if (fast) STEP_COL_RATIO *= 10;
+
+		for (unsigned j = 1; j < upto; ++j) {
+			for (unsigned i = 1; i <= j; ++i) {
+				if (fast) gcdFast(j, i, steps);
+				else gcdSlow(i, j, steps);
+
+				unsigned colour = sqrt(steps) * STEP_COL_RATIO;
+				gcdGraph.at<cv::Vec3w>(i, j) = cv::Vec3w(MAX_COL - colour, MAX_COL - colour, MAX_COL);
+				gcdGraph.at<cv::Vec3w>(j, i) = cv::Vec3w(MAX_COL - colour, MAX_COL - colour, MAX_COL);
+				steps = 0;
+			}
+		}
+		if (fast) cv::imwrite("task1D_fast.png", gcdGraph);
+		else cv::imwrite("task1D_slow.png", gcdGraph);
+	}
+					</div>
+					</pre>
+					<img src="Results/Taskset1/task1D_fast.png" width="350" height="350">
+					<img src="Results/Taskset1/task1D_slow.png" width="350" height="350">
 				</main>
+				
+				
 				
 				<nav id="sidebar">
 					<div class="widget">

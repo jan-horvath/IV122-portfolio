@@ -1,0 +1,337 @@
+ <!DOCTYPE html>
+<!-- Template by html.am -->
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<title>IV122 portfolio</title>
+	<style type="text/css">
+		html, #page { padding:0; margin:0;}
+		body { margin:0; padding:0; width:100%; color:#000000; font:normal 12px/2.0em Sans-Serif;} 
+		h1, h2, h3, h4, h5, h6 {color:darkblue;}
+		#page { background:#eee;}
+		#header, #footer, #top-nav, #content, #content #contentbar, #content #sidebar { margin:0; padding:0;}
+					
+		/* Logo */
+		#logo { padding:10px; width:auto; float:left;}
+		#logo h1 a, h1 a:hover { color:darkblue; text-decoration:none;}
+		#logo h1 span { color:#d3d3f9;}
+
+		/* Header */
+		#header { background:#eee; }
+		#header-inner { margin:0 auto; padding:10px; width:970px;background:#fff;}
+		
+		/* Feature */
+		.feature { background:#eee;padding:0;}
+		.feature-inner { margin:auto;padding:10px;width:970px;background:blue; }
+		.feature-inner h1 {color:#d3d3f9;font-size:32px;}
+		
+		/* Menu */
+		#top-nav { margin:0 auto; padding:0px 0 0; height:37px; float:right;}
+		#top-nav ul { list-style:none; padding:0; height:37px; float:left;}
+		#top-nav ul li { margin:0; padding:0 0 0 8px; float:left;}
+		#top-nav ul li a { display:block; margin:0; padding:8px 20px; color:blue; text-decoration:none;}
+		#top-nav ul li.active a, #top-nav ul li a:hover { color:#d3d3f9;}
+		
+		/* Content */
+		#content-inner { margin:0 auto; padding:10px; width:970px;background:#fff;}
+		#content #contentbar { margin:0; padding:0; float:right; width:830px;}
+		#content #contentbar .article { margin:0 0 24px; padding:0 20px 0 15px; }
+		#content #sidebar { padding:0; float:left; width:120px; background:#d3d3f9}
+		#content #sidebar .widget { margin:0 0 12px; padding:8px 8px 8px 13px;line-height:1.4em;}
+		#content #sidebar .widget h3 a { text-decoration:none;}
+		#content #sidebar .widget ul { margin:0; padding:0; list-style:none; color:#959595;}
+		#content #sidebar .widget ul li { margin:0;}
+		#content #sidebar .widget ul li { padding:4px 0; width:185px;}
+		#content #sidebar .widget ul li a { color:blue; text-decoration:none; margin-left:-16px; padding:4px 8px 4px 16px;}
+		#content #sidebar .widget ul li a:hover { color:#d3d3f9; font-weight:bold; text-decoration:none;}
+		
+		/* Footerblurb */
+		#footerblurb { background:#eee;color:blue;}
+		#footerblurb-inner { margin:0 auto; width:970px; padding:10px;background:#d3d3f9;border-bottom-right-radius:15px;border-bottom-left-radius:15px;}
+		#footerblurb .column { margin:0; text-align:justify; float:left;width:250px;padding:0 24px;}
+		
+		/* Footer */
+		#footer { background:#eee;}
+		#footer-inner { margin:auto; text-align:center; padding:12px; width:970px;}
+		#footer a {color:blue;text-decoration:none;}
+		
+		.boxed {border: 1px solid gray; white-space:pre-wrap;}
+		
+		/* Clear both sides to assist with div alignment  */
+		.clr { clear:both; padding:0; margin:0; width:100%; font-size:0px; line-height:0px;}
+	</style>
+	<script type="text/javascript">
+		/* =============================
+		This script generates sample text for the body content. 
+		You can remove this script and any reference to it. 
+		 ============================= */
+		var bodyText=["The smaller your reality, the more convinced you are that you know everything.", "If the facts don't fit the theory, change the facts.", "The past has no power over the present moment.", "This, too, will pass.", "</p><p>You will not be punished for your anger, you will be punished by your anger.", "Peace comes from within. Do not seek it without.", "<h2>Heading</h2><p>The most important moment of your life is now. The most important person in your life is the one you are with now, and the most important activity in your life is the one you are involved with now."]
+		function generateText(sentenceCount){
+			for (var i=0; i<sentenceCount; i++)
+			document.write(bodyText[Math.floor(Math.random()*7)]+" ")
+		}
+	</script>
+</head>
+<body>
+	<div id="page">
+		<header id="header">
+			<div id="header-inner">	
+				<div id="top-nav">
+					<ul>
+					<li><a href="index.html">INDEX</a></li>
+					</ul>
+				</div>
+				<div class="clr"></div>
+			</div>
+		</header>
+		<div class="feature">
+			<div class="feature-inner">
+			<h1>IV122 portfolio</h1>
+			<h2>Ján Horváth</h2>
+			<h2>433736</h2>
+			</div>
+		</div>
+	
+
+		<div id="content">
+			<div id="content-inner">
+			
+				<main id="contentbar">
+					<h3>Variations/Permutations/Combinations</h3>
+					<pre>
+					<div class="boxed">
+	vector&ltvector&ltchar>> variations(const vector&ltchar> &in, unsigned k, bool repetition = false) {
+		vector&ltvector&ltchar>> output;
+		if (k == 1) {
+			for (char c : in) {
+				output.emplace_back(vector&ltchar>({c}));
+			}
+			return output;
+		}
+
+		for (size_t i = 0; i < in.size(); ++i) {
+			auto copy = in;
+			auto erased = copy[i];
+
+			if (!repetition) {copy.erase(copy.begin()+i);}
+
+			auto toAppend = variations(copy, k-1);
+			for (auto& item: toAppend) {
+				item.push_back(erased);
+			}
+
+			output.insert(output.end(), toAppend.begin(), toAppend.end());
+		}
+
+		return output;
+	}
+
+	vector&ltvector&ltchar>> permutations(const vector&ltchar> &in) {
+		return variations(in, in.size());
+	}
+
+	vector&ltvector&ltchar>> combinations(const vector&ltchar> &input, unsigned k, bool repetition = false) {
+		if (!repetition && input.size() == k) {return {input};}
+		if (k == 0) {return {{}};}
+
+		if (repetition && input.size() == 1) {
+			return vector&ltvector&ltchar>>({vector&ltchar>(k, input.front())});
+		}
+
+		vector&ltvector&ltchar>> merged;
+		unsigned maxIterations = repetition ? k : 1;
+
+		for (size_t i = 0; i <= maxIterations; ++i) {
+			auto include_i_times = combinations({input.begin()+1, input.end()}, k-i, repetition);
+
+			for (auto& combination : include_i_times) {
+				for (size_t j = 0; j < i; ++j) {
+					combination.push_back(input[0]);
+				}
+			}
+			merged.insert(merged.end(), include_i_times.begin(), include_i_times.end());
+		}
+		return merged;
+	}
+					</div>
+					</pre>
+					
+					<h3>Pascal triangle</h3>
+					<pre>
+					<div class="boxed">
+	void drawPascalTriangle(SVGFile& file, unsigned rows, unsigned divisor) {
+		vector<unsigned> row{1};
+		double blockSize = 0.007;
+		double centerY = -blockSize * rows / 2.0;
+		double centerX = 0.0;
+		unsigned colorID = 0;
+
+		for (size_t i = 0; i < rows; ++i) {
+			for (int j = row.size() - 1; j >= 0; --j) {
+				if (j != row.size()-1 && j != 0) {
+					row[j] = (row[j] + row[j-1]) % divisor;
+				}
+				colorID = row[j] % COLORS.size();
+				file.addRect({centerX, centerY}, blockSize, blockSize, COLORS[colorID], true);
+				centerX += blockSize;
+			}
+			row.push_back(1);
+			centerX = -((row.size() - 1) / 2.0) * blockSize;
+			centerY += blockSize;
+		}
+	}
+					</div>
+					</pre>
+					Rows=250 Divisor=5
+					
+					<embed src="Results/Taskset2/task2B.svg" width="400" height="400">
+					
+					<h3>PI approximation</h3>
+					3 different methods: Leibniz, Archimedes (polygon approximation) and randomized monte carlo algorithm. The input to Archimedes method is the number of iterations since it approximated PI the fastest. The input to the other two is time limin in milliseconds.
+					
+					The problem main restricting factor of this assignment was the precision of double. I was able to approximate PI to at most ~19 decimal places.  
+					
+					<pre>
+					<div class="boxed">
+	void leibniz(long timeLimit) {
+		auto start = std::chrono::high_resolution_clock::now();
+		auto workingTime = (chrono::high_resolution_clock::now() - start) / chrono::milliseconds(1);
+
+		long double PI = 1;
+
+		for (size_t i = 0; timeLimit > workingTime; ++i) {
+			PI = PI - 1.0/(4*i+3) + 1.0/(4*i+5);
+			workingTime = (chrono::high_resolution_clock::now() - start) / chrono::milliseconds(1);
+		}
+		cout << "Computation time using leibniz sequence = " << workingTime << " milliseconds." << endl;
+		cout << "Difference between computed pi and the pi constant = " << 4*PI - REAL_PI << endl << endl;
+	}
+
+	void archimedes_polygon(unsigned iterations) {
+		auto start = std::chrono::high_resolution_clock::now();
+		auto workingTime = (chrono::high_resolution_clock::now() - start) / chrono::nanoseconds(1);
+
+		long double PI = 0;
+		long double polygonSideLength = 1.0;
+		unsigned long long polygon_N = 6;
+
+		for (unsigned i = 0; i < iterations; ++i) {
+			long double B = 1.0 - sqrt(1.0 - polygonSideLength/2.0 * polygonSideLength/2.0);
+			polygonSideLength = sqrt(B * B + polygonSideLength/2 * polygonSideLength/2);
+			polygon_N = 2 * polygon_N;
+			PI = polygon_N * polygonSideLength;
+
+			workingTime = (chrono::high_resolution_clock::now() - start) / chrono::nanoseconds(1);
+		}
+		cout << "Computation time using archimedes polygon approximation = " << workingTime << " nanoseconds." << endl;
+		cout << "Difference between computed pi and the pi constant = " << PI/2 - REAL_PI << endl << endl;
+	}
+
+	void monte_carlo(double timeLimit) {
+		auto start = std::chrono::high_resolution_clock::now();
+		auto workingTime = (chrono::high_resolution_clock::now() - start) / chrono::milliseconds(1);
+		srand(500);
+
+		size_t in = 0;
+		size_t total = 0;
+
+		while (timeLimit > workingTime) {
+			double X = 2*((double)rand() / RAND_MAX) - 1;
+			double Y = 2*((double)rand() / RAND_MAX) - 1;
+			if (sqrt(X*X + Y*Y) <= 1.0) {
+				++in;
+			}
+			++total;
+
+			workingTime = (chrono::high_resolution_clock::now() - start) / chrono::milliseconds(1);
+		}
+
+		cout << "Computation time using monte carlo randomized algorithm = " << workingTime << " milliseconds." << endl;
+		cout << "Difference between computed pi and the pi constant = " << 4 * (double)in / total - REAL_PI << endl << endl;
+	}
+					</div>
+					</pre>
+					
+					<pre>
+					<div class="boxed">
+	int main() {
+		leibniz(500);
+		archimedes_polygon(25);
+		monte_carlo(500);
+	}
+					</div>
+					</pre>
+					Output:<br/>
+					Computation time using leibniz sequence = 500 milliseconds.<br/>
+					Difference between computed pi and the pi constant = 6.967043318238837212863501e-08<br/><br/>
+
+					Computation time using archimedes polygon approximation = 2942 nanoseconds.<br/>
+					Difference between computed pi and the pi constant = -5.637851296924623056838755e-18<br/><br/>
+
+					Computation time using monte carlo randomized algorithm = 500 milliseconds.<br/>
+					Difference between computed pi and the pi constant = -0.0006630819361950202051048109<br/><br/>
+					
+					<h3>Modulo exponentiation</h3>
+					<pre>
+					<div class="boxed">
+	unsigned modulo(unsigned base, unsigned long long exp, unsigned divisor) {
+		if (exp == 1) {
+			return modulo(base, divisor);
+		}
+
+		unsigned newBase = modulo(base*base, divisor);
+		if ((exp & 1) == 1) {
+			unsigned tmpModulo = base * modulo(newBase, (exp-1)/2, divisor);
+			return modulo(tmpModulo, divisor);
+		} else {
+			return modulo(newBase, exp/2, divisor);
+		}
+	}
+	
+	unsigned modulo_trivial(unsigned base, unsigned long long exp, unsigned divisor) {
+		unsigned result = 1;
+		for (size_t i = 0; i < exp; ++i) {
+			result *= base;
+			result = modulo(result, divisor);
+		}
+		return result;
+	}
+					</div>
+					</pre>
+					Time needed for calculating (30000 % 50):</br>
+					Trivial: ~368 microseconds</br>
+					Logarithmic: ~1 microsecond</br></br>
+					Time needed for calculating (197648225 % 7):</br>
+					Trivial: ~1.7 seconds</br>
+					Logarithmic: ~368 microsecond</br>
+					
+				</main>
+				
+				
+				
+				<nav id="sidebar">
+					<div class="widget">
+						<h3>Left heading</h3>
+						<ul>
+						<li><a href="tasks1.html">Task set 1</a></li>
+						<li><a href="tasks2.html">Task set 2</a></li>
+						<li><a href="tasks3.html">Task set 3</a></li>
+						<li><a href="tasks4.html">Task set 4</a></li>
+						<li><a href="tasks5.html">Task set 5</a></li>
+						<li><a href="tasks6.html">Task set 6</a></li>
+						<li><a href="tasks7.html">Task set 7</a></li>
+						<li><a href="tasks8.html">Task set 8</a></li>
+						</ul>
+					</div>
+				</nav>
+				
+				<div class="clr"></div>
+			</div>
+		</div>
+	
+		<div id="footerblurb">
+			<div id="footerblurb-inner"></div>
+		</div>
+	</div>
+</body>
+</html>
