@@ -1,7 +1,7 @@
 <html>
 <body>
 
-<svg height="1000" width="1000">
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink= "http://www.w3.org/1999/xlink" viewBox="0 0 1000 1000">
 <rect width="100%" height="100%" fill="white"/>
    <line x1="561.803" y1="490.211" x2="617.557" y2="461.803" stroke="black" />
    <line x1="617.557" y1="461.803" x2="661.803" y2="417.557" stroke="black" />

@@ -1,0 +1,473 @@
+ <!DOCTYPE html>
+<!-- Template by html.am -->
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<title>IV122 portfolio</title>
+	<style type="text/css">
+		html, #page { padding:0; margin:0;}
+		body { margin:0; padding:0; width:100%; color:#000000; font:normal 12px/2.0em Sans-Serif;} 
+		h1, h2, h3, h4, h5, h6 {color:darkblue;}
+		#page { background:#eee;}
+		#header, #footer, #top-nav, #content, #content #contentbar, #content #sidebar { margin:0; padding:0;}
+					
+		/* Logo */
+		#logo { padding:10px; width:auto; float:left;}
+		#logo h1 a, h1 a:hover { color:darkblue; text-decoration:none;}
+		#logo h1 span { color:#d3d3f9;}
+
+		/* Header */
+		#header { background:#eee; }
+		#header-inner { margin:0 auto; padding:10px; width:970px;background:#fff;}
+		
+		/* Feature */
+		.feature { background:#eee;padding:0;}
+		.feature-inner { margin:auto;padding:10px;width:970px;background:blue; }
+		.feature-inner h1 {color:#d3d3f9;font-size:32px;}
+		
+		/* Menu */
+		#top-nav { margin:0 auto; padding:0px 0 0; height:37px; float:right;}
+		#top-nav ul { list-style:none; padding:0; height:37px; float:left;}
+		#top-nav ul li { margin:0; padding:0 0 0 8px; float:left;}
+		#top-nav ul li a { display:block; margin:0; padding:8px 20px; color:blue; text-decoration:none;}
+		#top-nav ul li.active a, #top-nav ul li a:hover { color:#d3d3f9;}
+		
+		/* Content */
+		#content-inner { margin:0 auto; padding:10px; width:970px;background:#fff;}
+		#content #contentbar { margin:0; padding:0; float:right; width:830px;}
+		#content #contentbar .article { margin:0 0 24px; padding:0 20px 0 15px; }
+		#content #sidebar { padding:0; float:left; width:120px; background:#d3d3f9}
+		#content #sidebar .widget { margin:0 0 12px; padding:8px 8px 8px 13px;line-height:1.4em;}
+		#content #sidebar .widget h3 a { text-decoration:none;}
+		#content #sidebar .widget ul { margin:0; padding:0; list-style:none; color:#959595;}
+		#content #sidebar .widget ul li { margin:0;}
+		#content #sidebar .widget ul li { padding:4px 0; width:185px;}
+		#content #sidebar .widget ul li a { color:blue; text-decoration:none; margin-left:-16px; padding:4px 8px 4px 16px;}
+		#content #sidebar .widget ul li a:hover { color:#d3d3f9; font-weight:bold; text-decoration:none;}
+		
+		/* Footerblurb */
+		#footerblurb { background:#eee;color:blue;}
+		#footerblurb-inner { margin:0 auto; width:970px; padding:10px;background:#d3d3f9;border-bottom-right-radius:15px;border-bottom-left-radius:15px;}
+		#footerblurb .column { margin:0; text-align:justify; float:left;width:250px;padding:0 24px;}
+		
+		/* Footer */
+		#footer { background:#eee;}
+		#footer-inner { margin:auto; text-align:center; padding:12px; width:970px;}
+		#footer a {color:blue;text-decoration:none;}
+		
+		.boxed {border: 1px solid gray; white-space:pre-wrap;}
+		
+		/* Clear both sides to assist with div alignment  */
+		.clr { clear:both; padding:0; margin:0; width:100%; font-size:0px; line-height:0px;}
+	</style>
+	<script type="text/javascript">
+		/* =============================
+		This script generates sample text for the body content. 
+		You can remove this script and any reference to it. 
+		 ============================= */
+		var bodyText=["The smaller your reality, the more convinced you are that you know everything.", "If the facts don't fit the theory, change the facts.", "The past has no power over the present moment.", "This, too, will pass.", "</p><p>You will not be punished for your anger, you will be punished by your anger.", "Peace comes from within. Do not seek it without.", "<h2>Heading</h2><p>The most important moment of your life is now. The most important person in your life is the one you are with now, and the most important activity in your life is the one you are involved with now."]
+		function generateText(sentenceCount){
+			for (var i=0; i<sentenceCount; i++)
+			document.write(bodyText[Math.floor(Math.random()*7)]+" ")
+		}
+	</script>
+</head>
+<body>
+	<div id="page">
+		<header id="header">
+			<div id="header-inner">	
+				<div id="top-nav">
+					<ul>
+					<li><a href="index.html">INDEX</a></li>
+					</ul>
+				</div>
+				<div class="clr"></div>
+			</div>
+		</header>
+		<div class="feature">
+			<div class="feature-inner">
+			<h1>IV122 portfolio</h1>
+			<h2>Ján Horváth</h2>
+			<h2>433736</h2>
+			</div>
+		</div>
+	
+
+		<div id="content">
+			<div id="content-inner">
+			
+				<main id="contentbar">
+					<h3>Drawings</h3>
+					<pre>
+					<div class="boxed">
+	void drawPolygon(Turtle& t, unsigned n, double radius) {
+		t.drawing(false);
+		t.forward(radius);
+		t.drawing(true);
+		t.left(90 + 360.0/n/2);
+		double side = radius*2*sin(M_PI/n);
+		for (size_t i = 0; i < n; ++i) {
+			t.forward(side);
+			t.left(360.0/n);
+		}
+		t.right(90 + 360.0/n/2);
+		t.drawing(false);
+		t.back(radius);
+		t.drawing(true);
+	}
+	
+	void drawStar(Turtle& t, unsigned n, double radius) {
+		double half_angle = 90.0 - 360.0/n;
+		double side = 2*radius*cos(half_angle * M_PI/180);
+
+		t.drawing(false);
+		t.forward(radius);
+		t.drawing(true);
+		t.left(180-half_angle);
+
+		for (unsigned i = 0; i < n; ++i) {
+			t.forward(side);
+			t.left(180-2*half_angle);
+		}
+		t.right(180-half_angle);
+		t.drawing(false);
+		t.back(radius);
+		t.drawing(true);
+	}
+					</div>
+					</pre>
+					<embed src="Results/Taskset3/task3A.svg" width="300" height="300">
+
+					<pre>
+					<div class="boxed">
+	void recursiveSquare(Turtle& t, unsigned depth, double sideLength, double param) {
+		t.drawing(false);
+		t.forward(sideLength/2);
+		t.right(90);
+		t.back(sideLength/2);
+		t.drawing(true);
+
+		for (unsigned i = 0; i < depth; ++i) {
+			for (unsigned j = 0; j < 4; ++j) {
+				t.forward(sideLength);
+				t.right(90);
+			}
+			t.forward(sideLength*param);
+			t.right(atan(param/(1-param)), true);
+			sideLength *= sqrt(2*param*param - 2*param + 1);
+		}
+	}
+	
+	recursiveSquare(B1, 150, 50, 1.01);
+	recursiveSquare(B2, 50, 600, 0.1);
+					</div>
+					</pre>
+					<embed src="Results/Taskset3/task3B-B1.svg" width="500" height="500">
+					<embed src="Results/Taskset3/task3B-B2.svg" width="500" height="500">
+					
+					<pre>
+					<div class="boxed">
+	void circularLattice(SVGFile& file, double radius, double spacing) {
+		double distanceFromCenter = 0.0;
+		double epsilon = 0.1;
+		radius += epsilon;
+		while (distanceFromCenter <= radius) {
+			double X = distanceFromCenter;
+			double Y = sqrt(radius * radius - X * X);
+			double H = file.m_height/2;
+			double W = file.m_width/2;
+
+			file.addLine({H - Y, W + X}, {H + Y, W + X});
+			file.addLine({H - Y, W - X}, {H + Y, W - X});
+			file.addLine({H + X, W + Y}, {H + X, W - Y});
+			file.addLine({H - X, W + Y}, {H - X, W - Y});
+
+			distanceFromCenter += spacing;
+		}
+	}
+					</div>
+					</pre>
+					<embed src="Results/Taskset3/task3B-C.svg" width="500" height="500">
+					
+					<pre>
+					<div class="boxed">
+	for (unsigned i = 0; i < 30; ++i) {
+		drawPolygon(D, 3, 10*i+4);
+	}
+					</div>
+					</pre>
+					<embed src="Results/Taskset3/task3B-D.svg" width="500" height="500">
+					<pre>
+					<div class="boxed">
+	void polygonBowl(Turtle& t, unsigned n, double radius) {
+		t.drawing(false);
+		t.forward(radius);
+		t.left(90 + 360.0/n/2);
+		double side = radius*2*sin(M_PI/n);
+		for (size_t i = 0; i < n; ++i) {
+
+			t.left(90 + 360.0/n/2);
+			drawPolygon(t, n, radius);
+			t.right(90 + 360.0/n/2);
+
+			t.drawing(false);
+			t.forward(side);
+			t.left(360.0/n);
+		}
+		t.right(90 + 360.0/n/2);
+		t.back(radius);
+		t.drawing(true);
+	}
+					</div>
+					</pre>
+					<embed src="Results/Taskset3/task3B-E.svg" width="500" height="500">
+					
+					<h3>Fratals</h3>
+					<pre>
+					<div class="boxed">
+	void recBush(Turtle& t, double length, unsigned depth, unsigned seed) {
+		if (depth == 0) {return;}
+
+		t.forward(length);
+
+		double angle = seed % 50 + 10;
+		double lengthModifier1 = 0.5 + ((float)(seed % 17)) / 37;
+		double lengthModifier2 = 0.5 + ((float)(seed % 23)) / 51;
+
+		t.left(angle);
+		recBush(t, length*lengthModifier1, depth-1, seed);
+		t.right(2*angle);
+		recBush(t, length*lengthModifier2, depth-1, seed);
+		t.left(angle);
+		t.back(length);
+	}				
+					</div>
+					</pre>
+The length and angle of branches is randomized based on the seed.
+					<embed src="Results/Taskset3/task3C-A.svg" width="500" height="500">
+					
+					<pre>
+					<div class="boxed">
+	void kochRec(Turtle &t, double length, unsigned depth) {
+		if (depth == 0) {
+			t.forward(length);
+			return;
+		}
+		kochRec(t, length/3, depth-1);
+		t.left(60);
+		kochRec(t, length/3, depth-1);
+		t.right(120);
+		kochRec(t, length/3, depth-1);
+		t.left(60);
+		kochRec(t, length/3, depth-1);
+	}
+
+	void koch(Turtle& t, double radius, unsigned depth) {
+		t.drawing(false);
+		t.left(60);
+		t.forward(radius);
+		t.right(180-30);
+		t.drawing(true);
+
+		kochRec(t, 2 * radius * sin(M_PI/3), depth);
+		t.right(120);
+		kochRec(t, 2 * radius * sin(M_PI/3), depth);
+		t.right(120);
+		kochRec(t, 2* radius * sin(M_PI/3), depth);
+	}				
+					</div>
+					</pre>
+					<embed src="Results/Taskset3/task3C-B.svg" width="500" height="500">
+					
+					<pre>
+					<div class="boxed">
+	void sierpinskiRec(Turtle &t, double radius, unsigned depth) {
+		drawPolygon(t, 3, radius);
+		t.drawing(false);
+
+		if (depth > 0) {
+			for (unsigned i = 0; i < 3; ++i) {
+				t.drawing(false);
+				t.back(radius);
+				sierpinskiRec(t, radius/2, depth - 1);
+				t.forward(radius);
+				t.left(120);
+			}
+		}
+	}
+
+	void sierpinski(Turtle &t, double radius, unsigned depth) {
+		drawPolygon(t, 3, radius);
+		t.drawing(false);
+		t.left(180);
+
+		if (depth > 0) {
+			sierpinskiRec(t, radius/2, depth - 1);
+		}
+		t.drawing(true);
+	}		
+					</div>
+					</pre>
+					<embed src="Results/Taskset3/task3C-C.svg" width="500" height="500">
+					
+					<pre>
+					<div class="boxed">
+	void polySnowflake(Turtle &t, unsigned polyDegree, double radius, unsigned depth) {
+		if (depth == 0) {
+			if (polyDegree % 2 == 0) {t.left(180.0/polyDegree);}
+			drawPolygon(t, polyDegree, radius);
+			if (polyDegree % 2 == 0) {t.right(180.0/polyDegree);}
+			return;
+		}
+
+		double polygonTriangleHeight = radius/(2+1.0/cos(M_PI/polyDegree));
+		double newRadius = radius - 2 * polygonTriangleHeight;
+
+		if (polyDegree % 2 == 1) {t.left(180.0/polyDegree);}
+		polySnowflake(t, polyDegree, newRadius, depth-1);
+		if (polyDegree % 2 == 1) {t.right(180.0/polyDegree);}
+		t.drawing(false);
+		for (unsigned i = 0; i < polyDegree; ++i) {
+			t.forward(2*polygonTriangleHeight);
+			polySnowflake(t, polyDegree, newRadius, depth-1);
+			t.drawing(false);
+			t.back(2*polygonTriangleHeight);
+			t.left(360.0/polyDegree);
+		}
+	}
+					</div>
+					</pre>
+					<embed src="Results/Taskset3/task3C-E.svg" width="500" height="500">
+					
+					<h3>Custom fractals</h3>
+					
+					<pre>
+					<div class="boxed">
+	void drawLadder(SVGFile& file, Point A, Point B, Point C, Point D, double frequency) {
+		file.addLine(A, B, COLORS[1]);
+		file.addLine(C, D, COLORS[1]);
+
+		double lambda = 0.0;
+		while (lambda < 1.0) {
+			file.addLine(A + ((B - A) * lambda), C + ((D - C) * lambda), COLORS[13]);
+			lambda += frequency;
+		}
+		file.addLine(B, D, COLORS[13]);
+	}
+
+	void drawHexaladder(SVGFile& file, Point center, double radius) {
+		for (unsigned i = 0; i < 6; ++i) {
+			Point A = {radius*cos(i*M_PI/3) + center.X, radius * sin(i*M_PI/3) + center.Y};
+			Point B = {radius*cos((i+1)*M_PI/3) + center.X, radius * sin((i+1)*M_PI/3) + center.Y};
+			Point C = {radius*cos((i+2)*M_PI/3) + center.X, radius * sin((i+2)*M_PI/3) + center.Y};
+			Point D = {radius*cos((i+3)*M_PI/3) + center.X, radius * sin((i+3)*M_PI/3) + center.Y};
+			drawLadder(file, A, B, C, D, 1.0/3);
+		}
+	}
+
+	void customFractal1(SVGFile& file, Point center, double radius, unsigned depth) {
+		if (depth == 0) {
+			drawHexaladder(file, center, radius);
+			return;
+		}
+
+		double centerRadius = sqrt(3) * 1.0/3 * radius;
+		customFractal1(file, center, radius/3, depth-1);
+		for (unsigned i = 0; i < 6; ++i) {
+			Point newCenter = {centerRadius*cos(i*M_PI/3 + M_PI/6) + center.X, 
+				centerRadius * sin(i*M_PI/3 + M_PI/6) + center.Y};
+			customFractal1(file, newCenter, radius/3, depth-1);
+		}
+	}						
+					</div>
+					</pre>
+					<embed src="Results/Taskset3/task3D-1.svg" width="500" height="500">
+					
+					<pre>
+					<div class="boxed">
+	void customFractal2(Turtle &t, double length, unsigned depth) {
+		if (depth == 0) {
+			t.forward(length);
+			return;
+		}
+
+		double quarter = length/4;
+
+		customFractal2(t, 1.5*quarter - quarter/sqrt(2), depth-1);
+		t.left(45);
+		customFractal2(t, length/4, depth-1);
+		t.left(45);
+		customFractal2(t, length/4, depth-1);
+		t.right(45);
+		customFractal2(t, length/4, depth-1);
+		t.right(45);
+		customFractal2(t, length/4, depth-1);
+		t.right(180-45);
+		customFractal2(t, length/4, depth-1);
+		t.left(45);
+		customFractal2(t, length/4, depth-1);
+		t.left(45);
+		customFractal2(t, length/4, depth-1);
+		t.left(45);
+		customFractal2(t, 1.5*quarter - quarter/sqrt(2), depth-1);
+	}						
+					</div>
+					</pre>
+					<embed src="Results/Taskset3/task3D-2.svg" width="500" height="500">
+					
+					<pre>
+					<div class="boxed">
+	void customFractal3(Turtle &t, double length, unsigned depth) {
+		if (depth == 0) {
+			t.forward(length);
+			return;
+		}
+
+		double quarter = length/4;
+
+		customFractal3(t, quarter, depth-1);
+		t.left(45);
+		customFractal3(t, quarter*sqrt(2), depth-1);
+		t.left(45);
+		customFractal3(t, quarter, depth-1);
+		t.right(180);
+		customFractal3(t, quarter, depth-1);
+		t.left(45);
+		customFractal3(t, quarter*sqrt(2), depth-1);
+		t.left(45);
+		customFractal3(t, quarter, depth-1);
+	}						
+					</div>
+					</pre>
+					<embed src="Results/Taskset3/task3D-3.svg" width="500" height="500">
+					
+				</main>
+				
+				
+				
+				<nav id="sidebar">
+					<div class="widget">
+						<h3>Left heading</h3>
+						<ul>
+						<li><a href="tasks1.html">Task set 1</a></li>
+						<li><a href="tasks2.html">Task set 2</a></li>
+						<li><a href="tasks3.html">Task set 3</a></li>
+						<li><a href="tasks4.html">Task set 4</a></li>
+						<li><a href="tasks5.html">Task set 5</a></li>
+						<li><a href="tasks6.html">Task set 6</a></li>
+						<li><a href="tasks7.html">Task set 7</a></li>
+						<li><a href="tasks8.html">Task set 8</a></li>
+						</ul>
+					</div>
+				</nav>
+				
+				<div class="clr"></div>
+			</div>
+		</div>
+	
+		<div id="footerblurb">
+			<div id="footerblurb-inner"></div>
+		</div>
+	</div>
+</body>
+</html>
