@@ -403,11 +403,49 @@
 					<embed src="Results/Taskset4/solution3.png">
 					
 					<h3>Custom riddle</h3>
+The pixels were separated into two groups. One of them received color values of a random multiple of 23. The other group got the same but were increased by one.
 					<pre>
 					<div class="boxed">
+	void convertToRiddle(Mat &pic) {
+		const uint8_t PRIME = 23;
+		const uint8_t ALPHA = MAX_COL_8BIT/PRIME;
+		for (unsigned x = 0; x < pic.cols; ++x) {
+			for (unsigned y = 0; y < pic.rows-1; ++y) {
+				if (pic.at<Vec3b>(y,x).val[0] > pic.at<Vec3b>(y,x).val[1]) {
+					pic.at<Vec3b>(y,x) = Vec3b((rand() % ALPHA) * PRIME + 1,
+							(rand() % ALPHA) * PRIME + 1, (rand() % ALPHA) * PRIME + 1);
+				} else {
+					pic.at<Vec3b>(y,x) = Vec3b((rand() % ALPHA) * PRIME, (rand() % ALPHA) * PRIME,
+					(rand() % ALPHA) * PRIME);
+				}
+			}
+		}
+	}
 
+	void solveRiddle(Mat &pic) {
+		const uint8_t PRIME = 23;
+		const uint8_t ALPHA = MAX_COL_8BIT/PRIME;
+		for (unsigned x = 0; x < pic.cols; ++x) {
+			for (unsigned y = 0; y < pic.rows-1; ++y) {
+				pic.at<Vec3b>(y,x).val[0] = (pic.at<Vec3b>(y,x).val[0] % PRIME) * MAX_COL_8BIT;
+				pic.at<Vec3b>(y,x).val[1] = (pic.at<Vec3b>(y,x).val[1] % PRIME) * MAX_COL_8BIT;
+				pic.at<Vec3b>(y,x).val[2] = (pic.at<Vec3b>(y,x).val[2] % PRIME) * MAX_COL_8BIT;
+			}
+		}
+	}
+
+	auto original = imread("original.png");
+	convertToRiddle(original);
+	imwrite("riddle.png", original);
+
+	auto riddle = imread("riddle.png");
+	solveRiddle(riddle);
+	imwrite("solution.png", riddle);
 					</div>
 					</pre>
+					<embed src="Results/Taskset4/original.png" width="700">
+					<embed src="Results/Taskset4/riddle.png" width="700">
+					<embed src="Results/Taskset4/solution.png" width="700">
 					
 				</main>
 				

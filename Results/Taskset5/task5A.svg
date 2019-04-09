@@ -1,0 +1,76 @@
+<html>
+<body>
+
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink= "http://www.w3.org/1999/xlink" viewBox="0 0 1000 1000">
+<rect width="100%" height="100%" fill="white"/>
+   <line x1="116.75" y1="887.65" x2="264.191" y2="626.382" stroke="black" />
+   <line x1="592.76" y1="356.32" x2="306.794" y2="447.002" stroke="black" />
+   <line x1="790.73" y1="543.81" x2="684.245" y2="263.344" stroke="black" />
+   <line x1="58.6" y1="911.98" x2="133.057" y2="621.366" stroke="black" />
+   <line x1="370.2" y1="872.26" x2="663.354" y2="808.537" stroke="black" />
+   <line x1="664.14" y1="690.05" x2="936.315" y2="816.228" stroke="black" />
+   <line x1="673.31" y1="764.6" x2="408.653" y2="623.331" stroke="black" />
+   <line x1="480.52" y1="179.67" x2="432.954" y2="475.875" stroke="black" />
+   <line x1="230.84" y1="833.08" x2="411.608" y2="593.658" stroke="black" />
+   <line x1="189.4" y1="520.71" x2="294.281" y2="239.641" stroke="black" />
+   <line x1="64.53" y1="940.37" x2="130.602" y2="647.736" stroke="black" />
+   <line x1="852.35" y1="376.23" x2="1150.85" y2="406.196" stroke="black" />
+   <line x1="412.01" y1="768.65" x2="309.753" y2="486.616" stroke="black" />
+   <line x1="622.22" y1="897.73" x2="707.108" y2="609.991" stroke="black" />
+   <line x1="825.85" y1="307.23" x2="927.254" y2="589.572" stroke="black" />
+   <line x1="650.42" y1="297.73" x2="438.339" y2="509.913" stroke="black" />
+   <line x1="294.33" y1="468.68" x2="594.129" y2="479.67" stroke="black" />
+   <line x1="989.39" y1="198.5" x2="690.747" y2="226.997" stroke="black" />
+   <line x1="138.87" y1="3.03" x2="427.235" y2="85.7697" stroke="black" />
+   <line x1="542.78" y1="617.98" x2="672.522" y2="888.474" stroke="black" />
+   <line x1="386.63" y1="865.27" x2="271.562" y2="588.215" stroke="black" />
+   <line x1="926.52" y1="994.34" x2="630.815" y2="943.757" stroke="black" />
+   <line x1="301.58" y1="352.18" x2="402.14" y2="69.536" stroke="black" />
+   <line x1="813.43" y1="616.46" x2="915.158" y2="334.234" stroke="black" />
+   <line x1="85.14" y1="865.19" x2="304.144" y2="660.16" stroke="black" />
+   <line x1="63.7" y1="545.91" x2="336.355" y2="420.773" stroke="black" />
+   <line x1="712.46" y1="123.12" x2="650.05" y2="416.557" stroke="black" />
+   <line x1="904.62" y1="388.69" x2="605.969" y2="417.107" stroke="black" />
+   <line x1="253.96" y1="240.97" x2="543.142" y2="320.805" stroke="black" />
+   <line x1="235.32" y1="95.07" x2="247.486" y2="394.823" stroke="black" />
+   <line x1="447.26" y1="645.67" x2="704.43" y2="491.192" stroke="black" />
+   <line x1="262.14" y1="976.26" x2="412.603" y2="716.72" stroke="black" />
+   <line x1="841.45" y1="450.51" x2="770.754" y2="158.959" stroke="black" />
+   <line x1="159.95" y1="204.37" x2="274.084" y2="481.811" stroke="black" />
+   <line x1="491.01" y1="282.65" x2="229.859" y2="430.299" stroke="black" />
+   <circle cx="179.028" cy="777.292" r="3" stroke="black" fill="black" />
+   <circle cx="444.609" cy="403.3" r="3" stroke="black" fill="black" />
+   <circle cx="737.859" cy="404.557" r="3" stroke="black" fill="black" />
+   <circle cx="647.518" cy="811.979" r="3" stroke="black" fill="black" />
+   <circle cx="636.934" cy="814.279" r="3" stroke="black" fill="black" />
+   <circle cx="681.161" cy="697.941" r="3" stroke="black" fill="black" />
+   <circle cx="663.103" cy="759.152" r="3" stroke="black" fill="black" />
+   <circle cx="592.388" cy="721.405" r="3" stroke="black" fill="black" />
+   <circle cx="461.476" cy="298.259" r="3" stroke="black" fill="black" />
+   <circle cx="461.284" cy="299.456" r="3" stroke="black" fill="black" />
+   <circle cx="369.016" cy="650.069" r="3" stroke="black" fill="black" />
+   <circle cx="322.719" cy="711.389" r="3" stroke="black" fill="black" />
+   <circle cx="204.03" cy="481.505" r="3" stroke="black" fill="black" />
+   <circle cx="290.066" cy="250.938" r="3" stroke="black" fill="black" />
+   <circle cx="246.396" cy="367.966" r="3" stroke="black" fill="black" />
+   <circle cx="237.29" cy="392.37" r="3" stroke="black" fill="black" />
+   <circle cx="898.356" cy="380.848" r="3" stroke="black" fill="black" />
+   <circle cx="400.654" cy="737.33" r="3" stroke="black" fill="black" />
+   <circle cx="643.067" cy="827.066" r="3" stroke="black" fill="black" />
+   <circle cx="875.282" cy="444.864" r="3" stroke="black" fill="black" />
+   <circle cx="856.743" cy="393.245" r="3" stroke="black" fill="black" />
+   <circle cx="473.005" cy="475.23" r="3" stroke="black" fill="black" />
+   <circle cx="785.069" cy="217.996" r="3" stroke="black" fill="black" />
+   <circle cx="399.224" cy="77.7327" r="3" stroke="black" fill="black" />
+   <circle cx="361.526" cy="804.825" r="3" stroke="black" fill="black" />
+   <circle cx="333.349" cy="262.887" r="3" stroke="black" fill="black" />
+   <circle cx="895.206" cy="389.586" r="3" stroke="black" fill="black" />
+   <circle cx="262.852" cy="454.507" r="3" stroke="black" fill="black" />
+   <circle cx="650.841" cy="412.837" r="3" stroke="black" fill="black" />
+   <circle cx="828.222" cy="395.959" r="3" stroke="black" fill="black" />
+   <circle cx="462.77" cy="298.616" r="3" stroke="black" fill="black" />
+   <circle cx="248.547" cy="419.734" r="3" stroke="black" fill="black" />
+</svg>
+
+</body>
+</html>

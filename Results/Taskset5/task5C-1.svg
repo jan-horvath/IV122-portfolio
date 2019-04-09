@@ -1,0 +1,43 @@
+<html>
+<body>
+
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink= "http://www.w3.org/1999/xlink" viewBox="0 0 1000 1000">
+<rect width="100%" height="100%" fill="white"/>
+   <circle cx="309" cy="307" r="2" stroke="black" fill="black" />
+   <circle cx="308" cy="409" r="2" stroke="black" fill="black" />
+   <circle cx="305" cy="512" r="2" stroke="black" fill="black" />
+   <circle cx="308" cy="605" r="2" stroke="black" fill="black" />
+   <circle cx="311" cy="704" r="2" stroke="black" fill="black" />
+   <circle cx="409" cy="306" r="2" stroke="black" fill="black" />
+   <circle cx="407" cy="408" r="2" stroke="black" fill="black" />
+   <circle cx="409" cy="511" r="2" stroke="black" fill="black" />
+   <circle cx="408" cy="604" r="2" stroke="black" fill="black" />
+   <circle cx="405" cy="711" r="2" stroke="black" fill="black" />
+   <circle cx="511" cy="307" r="2" stroke="black" fill="black" />
+   <circle cx="507" cy="409" r="2" stroke="black" fill="black" />
+   <circle cx="510" cy="508" r="2" stroke="black" fill="black" />
+   <circle cx="506" cy="612" r="2" stroke="black" fill="black" />
+   <circle cx="512" cy="708" r="2" stroke="black" fill="black" />
+   <circle cx="608" cy="312" r="2" stroke="black" fill="black" />
+   <circle cx="612" cy="406" r="2" stroke="black" fill="black" />
+   <circle cx="606" cy="512" r="2" stroke="black" fill="black" />
+   <circle cx="609" cy="605" r="2" stroke="black" fill="black" />
+   <circle cx="604" cy="707" r="2" stroke="black" fill="black" />
+   <circle cx="712" cy="305" r="2" stroke="black" fill="black" />
+   <circle cx="704" cy="406" r="2" stroke="black" fill="black" />
+   <circle cx="709" cy="512" r="2" stroke="black" fill="black" />
+   <circle cx="712" cy="612" r="2" stroke="black" fill="black" />
+   <circle cx="706" cy="709" r="2" stroke="black" fill="black" />
+   <line x1="305" y1="512" x2="309" y2="307" stroke="black" />
+   <line x1="309" y1="307" x2="409" y2="306" stroke="black" />
+   <line x1="409" y1="306" x2="511" y2="307" stroke="black" />
+   <line x1="511" y1="307" x2="712" y2="305" stroke="black" />
+   <line x1="712" y1="305" x2="712" y2="612" stroke="black" />
+   <line x1="712" y1="612" x2="706" y2="709" stroke="black" />
+   <line x1="706" y1="709" x2="405" y2="711" stroke="black" />
+   <line x1="405" y1="711" x2="311" y2="704" stroke="black" />
+   <line x1="311" y1="704" x2="305" y2="512" stroke="black" />
+</svg>
+
+</body>
+</html>
