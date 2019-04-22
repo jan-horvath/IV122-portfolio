@@ -1,0 +1,337 @@
+ <!DOCTYPE html>
+<!-- Template by html.am -->
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<title>IV122 portfolio</title>
+	<style type="text/css">
+		html, #page { padding:0; margin:0;}
+		body { margin:0; padding:0; width:100%; color:#000000; font:normal 12px/2.0em Sans-Serif;}
+		h1, h2, h3, h4, h5, h6 {color:darkblue;}
+		#page { background:#eee;}
+		#header, #footer, #top-nav, #content, #content #contentbar, #content #sidebar { margin:0; padding:0;}
+					
+		/* Logo */
+		#logo { padding:10px; width:auto; float:left;}
+		#logo h1 a, h1 a:hover { color:darkblue; text-decoration:none;}
+		#logo h1 span { color:#d3d3f9;}
+
+		/* Header */
+		#header { background:#eee; }
+		#header-inner { margin:0 auto; padding:10px; width:970px;background:#fff;}
+		
+		/* Feature */
+		.feature { background:#eee;padding:0;}
+		.feature-inner { margin:auto;padding:10px;width:970px;background:blue; }
+		.feature-inner h1 {color:#d3d3f9;font-size:32px;}
+		
+		/* Menu */
+		#top-nav { margin:0 auto; padding:0px 0 0; height:37px; float:right;}
+		#top-nav ul { list-style:none; padding:0; height:37px; float:left;}
+		#top-nav ul li { margin:0; padding:0 0 0 8px; float:left;}
+		#top-nav ul li a { display:block; margin:0; padding:8px 20px; color:blue; text-decoration:none;}
+		#top-nav ul li.active a, #top-nav ul li a:hover { color:#d3d3f9;}
+		
+		/* Content */
+		#content-inner { margin:0 auto; padding:10px; width:970px;background:#fff;}
+		#content #contentbar { margin:0; padding:0; float:right; width:830px;}
+		#content #contentbar .article { margin:0 0 24px; padding:0 20px 0 15px; }
+		#content #sidebar { padding:0; float:left; width:120px; background:#d3d3f9}
+		#content #sidebar .widget { margin:0 0 12px; padding:8px 8px 8px 13px;line-height:1.4em;}
+		#content #sidebar .widget h3 a { text-decoration:none;}
+		#content #sidebar .widget ul { margin:0; padding:0; list-style:none; color:#959595;}
+		#content #sidebar .widget ul li { margin:0;}
+		#content #sidebar .widget ul li { padding:4px 0; width:185px;}
+		#content #sidebar .widget ul li a { color:blue; text-decoration:none; margin-left:-16px; padding:4px 8px 4px 16px;}
+		#content #sidebar .widget ul li a:hover { color:#d3d3f9; font-weight:bold; text-decoration:none;}
+		
+		/* Footerblurb */
+		#footerblurb { background:#eee;color:blue;}
+		#footerblurb-inner { margin:0 auto; width:970px; padding:10px;background:#d3d3f9;border-bottom-right-radius:15px;border-bottom-left-radius:15px;}
+		#footerblurb .column { margin:0; text-align:justify; float:left;width:250px;padding:0 24px;}
+		
+		/* Footer */
+		#footer { background:#eee;}
+		#footer-inner { margin:auto; text-align:center; padding:12px; width:970px;}
+		#footer a {color:blue;text-decoration:none;}
+		
+		.boxed {border: 1px solid gray; white-space:pre-wrap;}
+		
+		/* Clear both sides to assist with div alignment  */
+		.clr { clear:both; padding:0; margin:0; width:100%; font-size:0px; line-height:0px;}
+	</style>
+</head>
+<body>
+	<div id="page">
+		<header id="header">
+			<div id="header-inner">	
+				<div id="top-nav">
+					<ul>
+					<li><a href="index.html">INDEX</a></li>
+					</ul>
+				</div>
+				<div class="clr"></div>
+			</div>
+		</header>
+		<div class="feature">
+			<div class="feature-inner">
+			<h1>IV122 portfolio</h1>
+			<h2>Ján Horváth</h2>
+			<h2>433736</h2>
+			</div>
+		</div>
+	
+
+		<div id="content">
+			<div id="content-inner">
+			
+				<main id="contentbar">
+					<h3>Chaos game</h3>
+					<pre>
+					<div class="boxed">
+	void drawFixedPoints(Mat &pic, const vector&ltPoint2d> &fixedPoints) {
+		for (const auto& fp: fixedPoints) {
+			for (int x = (int)fp.x - 5; x <= fp.x + 5; ++x) {
+				for (int y = (int)fp.y - 5; y <= fp.y + 5; ++y) {
+					pic.at&ltVec3w>(y, x) = RED;
+				}
+			}
+		}
+	}
+
+	void chaosGame(Mat &pic, const vector&ltdouble> &fixedPointWeights, 
+			const vector&ltPoint2d> &fixedPoints, size_t iterations) {
+		assert(fixedPoints.size() == fixedPointWeights.size());
+		size_t count = fixedPoints.size();
+
+		Point2d point{0,0};
+		size_t past_FP_index = 0;
+		size_t FP_index = 0;
+		for (unsigned i = 0; i < iterations; ++i) {
+			do {
+				FP_index = rand() % count;
+			//} while (false);
+			} while (FP_index == past_FP_index);
+			point = point + (fixedPoints[FP_index] - point) * (1-fixedPointWeights[FP_index]);
+			if (i > iterations/100) {
+				pic.at&ltVec3w>((int) lround(point.y), (int) lround(point.x)) = COLORS[FP_index];
+			}
+			past_FP_index = FP_index;
+		}
+
+		drawFixedPoints(pic, fixedPoints);
+	}
+
+	void chaosGameRegularPolygon(Mat &pic, const vector&ltdouble> &fixedPointWeights, double radius, size_t iterations) {
+		vector&ltPoint2d> fixedPoints;
+		unsigned polygonNumber = fixedPointWeights.size();
+
+		for (unsigned i = 0; i < fixedPointWeights.size(); ++i) {
+			fixedPoints.push_back(
+				{cos(i * 2*M_PI/polygonNumber) * radius + (double)pic.cols/2,
+				sin(i * 2*M_PI/polygonNumber) * radius + (double)pic.rows/2});
+		}
+
+		chaosGame(pic, fixedPointWeights, fixedPoints, iterations);
+	}
+					</div>
+					</pre>
+					<b>All colors are assigned based on the index of last chosen point.<br></b>
+					Hexagon: r = 1/2, The same point cannot be chosen twice in a row.<br>
+					<embed src="Results/Taskset6/task6A.png" width="700" height="700">
+					<br>Hexagon: r = 1/2 (No point choice restriction)<br>
+					<embed src="Results/Taskset6/task6A1.png" width="700" height="700">
+					<br>Hexagon: r = 0.41, The same point cannot be chosen twice in a row.<br>
+					<embed src="Results/Taskset6/task6A6.png" width="700" height="700">
+					<br>Points arranged in rectangle with two extra points inside. r = 1/2 (No point choice restriction)<br>
+					<br>
+					<embed src="Results/Taskset6/task6A2.png" width="700" height="700">
+					<br>Points arranged in rectangle with two extra points inside. r = 1/2 The same point cannot be chosen twice in a row.<br>	
+					<embed src="Results/Taskset6/task6A4.png" width="700" height="700">
+					<br>Points arranged in rectangle with two extra points inside. r = 1/3 The same point cannot be chosen twice in a row.<br>
+					<embed src="Results/Taskset6/task6A7.png" width="700" height="700">
+					<br>Points arranged in rectangle with two extra points inside. r = 1/3 (No point choice restriction)<br>
+					<embed src="Results/Taskset6/task6A8.png" width="700" height="700">
+					<br>Points arranged in triangle with one extra point inside. r = 1/2 (No point choice restriction)<br>
+					<embed src="Results/Taskset6/task6A3.png" width="700" height="700">
+					<br>Points arranged in triangle with one extra point inside. r = 1/2 The same point cannot be chosen twice in a row<br>
+					<embed src="Results/Taskset6/task6A5.png" width="700" height="700">
+					
+					<h3>Feigenbaum's diagram</h3>
+					<pre>
+					<div class="boxed">
+	vector&ltdouble> getLogisticPattern(double r) {
+		vector&ltdouble> pattern;
+		double x = 0.5;
+
+		for (unsigned i = 0; i < 1000; ++i) {
+			x = 4 * r * x * (1-x);
+			if (i > 100) {pattern.push_back(x);}
+		}
+		return move(pattern);
+	}
+
+	void feigenbaum(Mat &pic, double xmin, double xmax, double rmin, double rmax) {
+		double r_increment = (rmax - rmin) / pic.cols;
+		double x_increment = (xmax - xmin) / pic.rows;
+
+		for (unsigned col = 0; col < pic.cols; ++col) {
+			auto pattern = getLogisticPattern(rmin + col*r_increment);
+			for (double num : pattern) {
+				if ((xmin < num) && (num < xmax)) {
+					auto &color = pic.at&ltVec3w>((int)((num - xmin)/(xmax - xmin) * pic.rows), col);
+					if (color.val[0] == MAX_COL) {
+						color = GREEN;
+						//pic.at&ltVec3w>((int)((num - xmin)/(xmax - xmin) * pic.rows), col) = BLACK;
+					} else if (color[1] != 0) {
+						color -= Vec3w(0, 13107, 0);
+					}
+				}
+			}
+		}
+	}					
+					</div>
+					</pre>
+					<embed src="Results/Taskset6/feigenbaum1.png" width="800" height="450">
+					<embed src="Results/Taskset6/feigenbaum2.png" width="800" height="450">
+					<embed src="Results/Taskset6/feigenbaum3.png" width="800" height="450">
+					<embed src="Results/Taskset6/feigenbaum4.png" width="800" height="450">
+					
+					<h3>Stochastic L-system</h3>
+					<pre>
+					<div class="boxed">
+	class LSystem {
+		public:
+			LSystem() = delete;
+
+			LSystem(const string &filename, double height, double width) : m_turtle(filename, height, width) {}
+
+			void addTranslationRule(char c, const vector&ltstring> &s) {
+				m_translationRules.insert({c, s});
+			}
+
+			void addDrawingRule(char c, const function&ltvoid(Turtle*)>& func) {
+				m_drawingRules.insert(std::pair&ltchar, const function&ltvoid()>>(c, bind(func, &m_turtle)));
+			}
+
+			template &ltclass T>
+			void addDrawingRule(char c, const function&ltvoid(Turtle*, T)>& func, T argument) {
+				m_drawingRules.insert(std::pair<char, const function<void()>>(c, bind(func, &m_turtle, argument)));
+			}
+
+			template &ltclass T, class U>
+			void addDrawingRule(char c, const function&ltvoid(Turtle*, T, U)>& func, T arg1, U arg2) {
+				m_drawingRules.insert(
+				std::pair&ltchar, const function&ltvoid()>>(c, bind(func, &m_turtle, arg1, arg2)));
+			}
+
+			string translate(const string& str, unsigned depth = 1) const {
+				string copy = str;
+				string output;
+				for (unsigned i = 0; i < depth; ++i) {
+					output = "";
+					for (char c : copy) {
+						auto rule = m_translationRules.find(c);
+						if (rule == m_translationRules.end()) {
+							output.append(string(1, c));
+						} else {
+							unsigned rulesCount = rule->second.size();
+							output.append(rule->second[rand() % rulesCount]);
+						}
+					}
+					copy = output;
+				}
+				return move(output);
+			}
+
+			void drawString(const string& str) const {
+				for (char c : str) {
+					auto rule = m_drawingRules.find(c);
+					if (rule != m_drawingRules.end()) {
+						rule->second();
+					}
+				}
+			}
+
+
+			Turtle m_turtle;
+		private:
+			map&ltchar, vector&ltstring>> m_translationRules;
+			map&ltchar, function&ltvoid()>> m_drawingRules;
+	};
+					</div>
+					</pre>
+						
+					<h3>Koch snowflake</h3>
+					<pre>
+					<div class="boxed">
+					</div>
+					</pre>
+						
+					<h3>Sierpinski triangle</h3>
+					<pre>
+					<div class="boxed">
+					</div>
+					</pre>
+						
+					<h3>Hilbert space-filling curve</h3>
+					<pre>
+					<div class="boxed">
+					</div>
+					</pre>
+					
+					<h3>Custom curve</h3>
+					<pre>
+					<div class="boxed">
+					</div>
+					</pre>
+						
+					<h3>Bush</h3>
+					<pre>
+					<div class="boxed">
+					</div>
+					</pre>
+						
+					<h3>Custom grass</h3>
+					<pre>
+					<div class="boxed">
+					</div>
+					</pre>
+						
+					<h3>Custom... something, I like it for some reason</h3>
+					<pre>
+					<div class="boxed">
+					</div>
+					</pre>
+
+					
+				</main>
+				
+				
+				
+				<nav id="sidebar">
+					<div class="widget">
+						<h3>Left heading</h3>
+						<ul>
+						<li><a href="tasks1.html">Task set 1</a></li>
+						<li><a href="tasks2.html">Task set 2</a></li>
+						<li><a href="tasks3.html">Task set 3</a></li>
+						<li><a href="tasks4.html">Task set 4</a></li>
+						<li><a href="tasks5.html">Task set 5</a></li>
+						<li><a href="tasks6.html">Task set 6</a></li>
+						<li><a href="tasks7.html">Task set 7</a></li>
+						<li><a href="tasks8.html">Task set 8</a></li>
+						</ul>
+					</div>
+				</nav>
+				
+				<div class="clr"></div>
+			</div>
+		</div>
+	
+		<div id="footerblurb">
+			<div id="footerblurb-inner"></div>
+		</div>
+	</div>
+</body>
+</html>
