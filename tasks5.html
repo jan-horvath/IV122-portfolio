@@ -6,7 +6,7 @@
 	<title>IV122 portfolio</title>
 	<style type="text/css">
 		html, #page { padding:0; margin:0;}
-		body { margin:0; padding:0; width:100%; color:#000000; font:normal 12px/2.0em Sans-Serif;} 
+		body { margin:0; padding:0; width:100%; color:#000000; font:normal 12px/2.0em Sans-Serif;}
 		h1, h2, h3, h4, h5, h6 {color:darkblue;}
 		#page { background:#eee;}
 		#header, #footer, #top-nav, #content, #content #contentbar, #content #sidebar { margin:0; padding:0;}
@@ -60,17 +60,6 @@
 		/* Clear both sides to assist with div alignment  */
 		.clr { clear:both; padding:0; margin:0; width:100%; font-size:0px; line-height:0px;}
 	</style>
-	<script type="text/javascript">
-		/* =============================
-		This script generates sample text for the body content. 
-		You can remove this script and any reference to it. 
-		 ============================= */
-		var bodyText=["The smaller your reality, the more convinced you are that you know everything.", "If the facts don't fit the theory, change the facts.", "The past has no power over the present moment.", "This, too, will pass.", "</p><p>You will not be punished for your anger, you will be punished by your anger.", "Peace comes from within. Do not seek it without.", "<h2>Heading</h2><p>The most important moment of your life is now. The most important person in your life is the one you are with now, and the most important activity in your life is the one you are involved with now."]
-		function generateText(sentenceCount){
-			for (var i=0; i<sentenceCount; i++)
-			document.write(bodyText[Math.floor(Math.random()*7)]+" ")
-		}
-	</script>
 </head>
 <body>
 	<div id="page">
@@ -97,317 +86,106 @@
 			<div id="content-inner">
 			
 				<main id="contentbar">
-					<h3>Basic shapes</h3>
+					<h3>Line segment intersections</h3>
 					<pre>
 					<div class="boxed">
-	void drawCircleImp(Mat &pic, double x, double y, double r, bool fill) {
-		const double DELTA = 0.015;
-
-		for (size_t i = 0; i < pic.cols; ++i) {
-			for (size_t j = 0; j < pic.rows; ++j) {
-				if (!fill) {
-					if (abs(sqrt((i - x) * (i - x) + (j - y) * (j - y)) / r - 1) < DELTA) {
-						pic.at<Vec3w>(j, i) = BLACK;
-					}
-				} else {
-					if (sqrt((i - x) * (i - x) + (j - y) * (j - y)) / r - 1 < DELTA) {
-						pic.at<Vec3w>(j, i) = BLACK;
-					}
-				}
-			}
+		vector&ltLineSegment&gt generateLineSegments(SVGFile& file, unsigned lineCount, double length) {
+		vector&ltLineSegment&gt LS;
+		for (unsigned i = 0; i < lineCount; ++i) {
+			Point A = generatePoint(0, file.m_width, 0, file.m_height);
+			Point B = generatePoint(0, file.m_width, 0, file.m_height);;
+			LS.push_back({A, A + (B-A).norm()*length});
+			file.addLine(LS.back().P1, LS.back().P2);
 		}
+		return std::move(LS);
 	}
 
-	void colorQuadpixel(Mat &pic, double X, double Y, const Vec3w &colour) {
-		pic.at<Vec3w>(static_cast<int>(floor(Y)), static_cast<int>(floor(X))) = colour;
-		pic.at<Vec3w>(static_cast<int>(floor(Y)), static_cast<int>(ceil(X))) = colour;
-		pic.at<Vec3w>(static_cast<int>(ceil(Y)), static_cast<int>(floor(X))) = colour;
-		pic.at<Vec3w>(static_cast<int>(ceil(Y)), static_cast<int>(ceil(X))) = colour;
-	}
-
-	void drawSpiral(Mat &pic, const Point2d& center, double maxRadius) {
-		double radius = maxRadius;
-		double radiusDecrement = 0.01;
-		double angle = M_PI_4;
-		double angleIncrement = 0.005;
-
-		while (radius > 0.5) {
-			double X = radius * cos(angle) + center.x;
-			double Y = radius * sin(angle) + center.y;
-			double ratio = radius/maxRadius;
-			colorQuadpixel(pic, X, Y, Vec3w(ratio*MAX_COL, (1-ratio)*MAX_COL, 4*(1-ratio)*ratio*MAX_COL));
-			radius -= radiusDecrement;
-			angle += angleIncrement;
-		}
-	}
-
-	struct ImplicitLine {
-		double A;
-		double B;
-		double C;
-
-		void computeC(double X, double Y) {
-			C = -(A*X + B*Y);
-		}
-
-		double getValue(double X, double Y) {
-			return A*X + B*Y + C;
-		}
-	};
-
-	double distance(double x1, double y1, double x2, double y2) {
-		return sqrt((x2-x1)*(x2-x1) + (y2-y1)*(y2-y1));
-	}
-
-	void equaliteralTriangle(Mat &pic, double minX, double maxY, double sideLength) {
-		ImplicitLine p{0, -sideLength};
-		p.computeC(minX, maxY);
-		ImplicitLine q{-sqrt(3)/2*sideLength, sideLength/2};
-		q.computeC(minX+sideLength, maxY);
-		ImplicitLine r{sqrt(3)/2*sideLength, sideLength/2};
-		r.computeC(minX, maxY);
-
-		for (size_t i = 0; i < pic.cols; ++i) {
-			for (size_t j = 0; j < pic.rows; ++j) {
-				if ((p.getValue(i, j) >= 0) && (q.getValue(i, j) >= 0) && (r.getValue(i,j) >= 0)) {
-					pic.at<Vec3w>(j,i) = Vec3w(MAX_COL*distance(i,j,minX, maxY)/sideLength,
-					MAX_COL*distance(i,j,minX + sideLength, maxY)/sideLength,
-					MAX_COL*distance(i,j,minX+sideLength/2, 
-					maxY-sqrt(3)/2*sideLength)/sideLength);
-				}
-			}
-		}
-	}
-
-	void ellipse(Mat &pic, double x1, double y1, double x2, double y2, double maxDistance) {
-		double focusDistance = distance(x1, y1, x2, y2);
-
-		for (size_t i = 0; i < pic.cols; ++i) {
-			for (size_t j = 0; j < pic.rows; ++j) {
-				double distanceSum = distance(x1, y1, i, j) + distance(x2, y2, i, j);
-				if (distanceSum <= maxDistance) {
-					double colorIntensity = (distanceSum - focusDistance)/(maxDistance - focusDistance);
-					pic.at<Vec3w>(j,i) = Vec3w(MAX_COL*colorIntensity ,
-											   MAX_COL*colorIntensity,
-											   MAX_COL*colorIntensity);
+	void detectIntersections(SVGFile& file, vector&ltLineSegment&gt& lineSegments) {
+		for (size_t i = 0; i < lineSegments.size(); ++i) {
+			for (size_t j = i+1; j < lineSegments.size(); ++j) {
+				Point p = lineSegments[i].intersect(lineSegments[j]);
+				if (p.X != LineSegment::NO_INTERSECTION) {
+					file.addCircle(p, 3, true);
 				}
 			}
 		}
 	}
 					</div>
 					</pre>
-					<embed src="Results/Taskset4/task4A.png" width="500" height="500">
+					<embed src="Results/Taskset5/task5A.svg" width="500" height="500">
 					
-					<h3>Filled polygon</h3>
+					<h3>Triangulation</h3>
 					<pre>
 					<div class="boxed">
-	void line(Mat &pic, double x1, double y1, double x2, double y2) {
-		double step = 1.0/(abs(y2 - y1) + abs(x2 - x1));
-		double x = x1;
-		double y = y1;
-		for (double lambda = 0.0; lambda <= 1.0; lambda += step) {
-			pic.at<Vec3w>(lround(x),lround(y)) = 0;
-			x += step * (x2-x1);
-			y += step * (y2-y1);
-		}
-	}
-
-	void fillPolygonRec(Mat &pic, unsigned x, unsigned y) {
-		if (pic.at<Vec3w>(y, x).val[0] == MAX_COL) {
-			while (y != 0 && pic.at<Vec3w>(y-1, x).val[0] == MAX_COL) {y -= 1;}
-
-			while (pic.at<Vec3w>(y, x).val[0] == MAX_COL) {
-				pic.at<Vec3w>(y, x) = BLACK;
-				if (x != 0) {
-					fillPolygonRec(pic, x-1, y);
-				}
-				if (x != pic.cols-1) {
-					fillPolygonRec(pic, x+1, y);
-				}
-				y += 1;
+	bool segmentIntersectsOthers(const LineSegment& segment, const vector&ltLineSegment&gt& segments) {
+		for (const auto& s : segments) {
+			if (segment.intersect(s).X != LineSegment::NO_INTERSECTION) {
+				return true;
 			}
 		}
+		return false;
 	}
 
-	void invertColors(Mat &pic) {
-		for (unsigned i = 0; i < pic.cols; ++i) {
-			for (unsigned j = 0; j < pic.rows; ++j) {
-				if (pic.at<Vec3w>(j, i).val[0] == 0) {
-					pic.at<Vec3w>(j, i) = WHITE;
-				} else {
-					pic.at<Vec3w>(j, i) = BLACK;
-				}
+	bool isShorterThan(const LineSegment& s1, const LineSegment& s2) {
+		return s1.getLength() < s2.getLength();
+	}
+
+	void triangulate(SVGFile& file, const vector&ltPoint&gt &points, bool shouldBeSorted) {
+		vector&ltLineSegment&gt segments = getLineSegmentsFromPoints(points);
+		vector&ltLineSegment&gt drawn;
+
+		if (shouldBeSorted) {
+			std::sort(segments.begin(), segments.end(), isShorterThan);
+		}
+
+		for (const auto& segment : segments) {
+			if (!segmentIntersectsOthers(segment, drawn)) {
+				file.addLine(segment.P1, segment.P2);
+				drawn.push_back(segment);
 			}
-		}
-	}
-
-	void fillPolygon(Mat &pic) {
-		fillPolygonRec(pic, pic.cols/2, pic.rows/2);
-		if ((pic.at<Vec3w>(0,0).val[0] == 0) &&
-			(pic.at<Vec3w>(0,pic.cols-1).val[0] == 0) &&
-			(pic.at<Vec3w>(pic.rows-1,0).val[0] == 0) &&
-			(pic.at<Vec3w>(pic.rows-1,pic.cols-1).val[0] == 0)) {
-			invertColors(pic);
-		}
-	}
-
-	void polygon(Mat &pic, const std::vector<Point2i> &points) {
-		for (unsigned i = 0; i < points.size()-1; ++i) {
-			line(pic, points[i].x, points[i].y, points[i+1].x, points[i+1].y);
-		}
-		line(pic, points.back().x, points.back().y, points[0].x, points[0].y);
-		fillPolygon(pic);
-	}
-
-	void swapColor(Vec3w &color) {
-		if (color.val[0] == 0) {
-			color = WHITE;
-		} else {
-			color = BLACK;
 		}
 	}
 					</div>
 					</pre>
-					<embed src="Results/Taskset4/task4B.png" width="500" height="500">
+					<embed src="Results/Taskset5/task5B-0.svg" width="400" height="400">
+					<embed src="Results/Taskset5/task5B-1.svg" width="400" height="400">
+					<embed src="Results/Taskset5/task5B-2.svg" width="400" height="400">
+					<embed src="Results/Taskset5/task5B-3.svg" width="400" height="400">
 					
-					<h3>Efects</h3>
+					<h3>Convex hull</h3>
 					<pre>
 					<div class="boxed">
-	void optical1(Mat &pic, unsigned squareSize, unsigned circleParam) {
-		unsigned centerX = pic.cols/2;
-		unsigned centerY = pic.rows/2;
-		Vec3w color;
-
-		for (unsigned x = 0; x < pic.cols; ++x) {
-			for (unsigned y = 0; y < pic.rows; ++y) {
-				color = WHITE;
-				if ((((x / squareSize) % 2) + ((y / squareSize) % 2)) == 1) {
-					swapColor(color);
-				}
-				if (lround(distance(x, y, centerX, centerY) / circleParam) % 2 == 1) {
-					swapColor(color);
-				}
-				pic.at<Vec3w>(y, x) = color;
-			}
-		}
-	}
-					</div>
-					</pre>
-					<embed src="Results/Taskset4/task4C-A.png" width="500" height="500">
-					
-					<pre>
-					<div class="boxed">
-	void optical2(Mat &pic, double period, unsigned squareParam) {
-		double centerX = pic.cols/2;
-		double centerY = pic.rows/2;
-		double dist;
-		double colorIntensity;
-
-		for (unsigned x = 0; x < pic.cols; ++x) {
-			for (unsigned y = 0; y < pic.rows; ++y) {
-				dist = distance(x, y, centerX, centerY);
-				colorIntensity = ((cos(dist/period * 2*M_PI) + 1)/2);
-				if ((lround(max(abs(x-centerX), abs(y-centerY))) / squareParam) % 2 == 1) {
-					colorIntensity = 1- colorIntensity;
-				}
-				pic.at<Vec3w>(y, x) = Vec3w(MAX_COL*colorIntensity, MAX_COL*colorIntensity, MAX_COL*colorIntensity);
-			}
-		}
-	}
-					</div>
-					</pre>
-					<embed src="Results/Taskset4/task4C-B.png" width="500" height="500">
-					
-					<pre>
-					<div class="boxed">
-	void optical3(Mat &pic, unsigned squareSize) {
-		const Vec3w GRAY{MAX_COL/2, MAX_COL/2, MAX_COL/2};
-		unsigned lineWidth = 5;
-		unsigned adjustment = squareSize * (pic.cols / squareSize + 1);
-
-		for (unsigned x = 0; x < pic.cols; ++x) {
-			for (unsigned y = 0; y < pic.rows; ++y) {
-				if (((x + squareSize/2) % squareSize <= lineWidth)
-				|| ((x + squareSize/2) % squareSize >= squareSize-lineWidth)
-				|| ((y + squareSize/2) % squareSize <= lineWidth)
-				|| ((y + squareSize/2) % squareSize >= squareSize-lineWidth)
-				|| ((x - y + adjustment) % squareSize <= sqrt(2)*lineWidth)
-				|| ((x - y + adjustment) % squareSize >= squareSize-sqrt(2)*lineWidth)
-				|| ((x + y) % squareSize <= sqrt(2)*lineWidth)
-				|| ((x + y) % squareSize >= squareSize-sqrt(2)*lineWidth)) {
-					pic.at<Vec3w>(y,x) = GRAY;
+	void konvexHullJarvis(SVGFile& file, const vector&ltPoint&gt &points) {
+		Point leftmost = *std::max_element(points.begin(), points.end(),
+		[](const Point& a, const Point& b) {return a.X > b.X;});
+		
+		Vector A{0, 1};
+		Vector B{0, 1};
+		Point latest = leftmost;
+		bool loopStart = false;
+		while (latest != leftmost || !loopStart) {
+			loopStart = true;
+			double greatestAngle = A.getAngle(B);
+			Point pointWithGreatestAngle = latest;
+			for (const Point& p: points) {
+				if (A.getAngle(p - latest) > greatestAngle) {
+					pointWithGreatestAngle = p;
+					B = pointWithGreatestAngle - latest;
+					greatestAngle = A.getAngle(B);
 				}
 			}
+			file.addLine(latest, pointWithGreatestAngle);
+			latest = pointWithGreatestAngle;
+			A = {-B.X, -B.Y};
+			B = A;
 		}
-
-		for (unsigned x = 0; x < pic.cols; ++x) {
-			for (unsigned y = 0; y < pic.rows; ++y) {
-				unsigned closestCenterX = squareSize * (x / squareSize + 1) - squareSize/2;
-				unsigned closestCenterY = squareSize * (y / squareSize + 1) - squareSize/2;
-				if (distance(x, y, closestCenterX, closestCenterY) < 2*lineWidth) {
-					pic.at<Vec3w>(y, x) = BLACK;
-				}
-			}
-		}
-	}
+	}				
 					</div>
 					</pre>
-					<embed src="Results/Taskset4/task4C-C.png" width="500" height="500">
-					
-					<h3>Riddles</h3>
-					<pre>
-					<div class="boxed">
-	void solveRiddle1(Mat &pic) {
-		for (unsigned x = 0; x < pic.cols; ++x) {
-			for (unsigned y = 0; y < pic.rows; ++y) {
-				pic.at<Vec3w>(y,x).val[0] *= 24;
-				pic.at<Vec3w>(y,x).val[1] = 0;
-				pic.at<Vec3w>(y,x).val[2] = 0;
-			}
-		}
-	}
-					</div>
-					</pre>
-					<embed src="Results/Taskset4/solution1.png">
-					
-					<pre>
-					<div class="boxed">
-	void solveRiddle2(Mat &pic) {
-		for (unsigned x = 0; x < pic.cols-1; ++x) {
-			for (unsigned y = 0; y < pic.rows; ++y) {
-				pic.at<Vec3w>(y,x).val[0] = 40*abs(pic.at<Vec3w>(y,x).val[0] - pic.at<Vec3w>(y,x+1).val[0]);
-				pic.at<Vec3w>(y,x).val[1] = 40*abs(pic.at<Vec3w>(y,x).val[1] - pic.at<Vec3w>(y,x+1).val[1]);
-				pic.at<Vec3w>(y,x).val[2] = 40*abs(pic.at<Vec3w>(y,x).val[2] - pic.at<Vec3w>(y,x+1).val[2]);
-			}
-		}
-	}					
-					</div>
-					</pre>
-					<embed src="Results/Taskset4/solution2.png">
-					
-					<pre>
-					<div class="boxed">
-	void solveRiddle3(Mat &pic) {
-		for (unsigned x = 0; x < pic.cols; ++x) {
-			for (unsigned y = 0; y < pic.rows; ++y) {
-				if ((x+y) % 2 == 1) {
-					pic.at<Vec3w>(y,x).val[0] = MAX_COL - pic.at<Vec3w>(y,x).val[0];
-					pic.at<Vec3w>(y,x).val[1] = MAX_COL - pic.at<Vec3w>(y,x).val[1];
-					pic.at<Vec3w>(y,x).val[2] = MAX_COL - pic.at<Vec3w>(y,x).val[2];
-				}
-			}
-		}
-	}					
-					</div>
-					</pre>
-					<embed src="Results/Taskset4/solution3.png">
-					
-					<h3>Custom riddle</h3>
-					<pre>
-					<div class="boxed">
-
-					</div>
-					</pre>
+					<embed src="Results/Taskset5/task5C-0.svg" width="400" height="400">
+					<embed src="Results/Taskset5/task5C-1.svg" width="400" height="400">
+					<embed src="Results/Taskset5/task5C-2.svg" width="400" height="400">
+					<embed src="Results/Taskset5/task5C-3.svg" width="400" height="400">
 					
 				</main>
 				
