@@ -55,22 +55,20 @@
 		#footer-inner { margin:auto; text-align:center; padding:12px; width:970px;}
 		#footer a {color:blue;text-decoration:none;}
 		
-		.boxed {border: 1px solid gray; white-space:pre-wrap;}
+		pre.code {
+			border: 2px solid gray;
+			padding-left: 10px;
+			color: #007700;
+			line-height: 1.5
+		}
+		
+		h3 {
+			font-size: 20px
+		}
 		
 		/* Clear both sides to assist with div alignment  */
 		.clr { clear:both; padding:0; margin:0; width:100%; font-size:0px; line-height:0px;}
 	</style>
-	<script type="text/javascript">
-		/* =============================
-		This script generates sample text for the body content. 
-		You can remove this script and any reference to it. 
-		 ============================= */
-		var bodyText=["The smaller your reality, the more convinced you are that you know everything.", "If the facts don't fit the theory, change the facts.", "The past has no power over the present moment.", "This, too, will pass.", "</p><p>You will not be punished for your anger, you will be punished by your anger.", "Peace comes from within. Do not seek it without.", "<h2>Heading</h2><p>The most important moment of your life is now. The most important person in your life is the one you are with now, and the most important activity in your life is the one you are involved with now."]
-		function generateText(sentenceCount){
-			for (var i=0; i<sentenceCount; i++)
-			document.write(bodyText[Math.floor(Math.random()*7)]+" ")
-		}
-	</script>
 </head>
 <body>
 	<div id="page">
@@ -98,362 +96,356 @@
 			
 				<main id="contentbar">
 					<h3>Basic shapes</h3>
-					<pre>
-					<div class="boxed">
-	void drawCircleImp(Mat &pic, double x, double y, double r, bool fill) {
-		const double DELTA = 0.015;
+					<i>drawCircleImp</i> - Uses implicit equation for circle. <i>DELTA</i> is the width of the line.<br>
+					<i>drawSpiral</i> - Going from outside to the center. Linearly decreases radius and increases angle.<br>
+					<i>equilateralTriangle</i> - First computes implicit lines of the triangle, then checks for each pixel, whether it lies in the correct half-plane for each line.<br>
+					<i>ellipse</i> - Ellipse is defined by a sum of distances from two points. I have used this distance to compute the colour. Darker colour means lower distance.
+					<pre class="code">
+void drawCircleImp(Mat &pic, double x, double y, double r, bool fill) {
+	const double DELTA = 0.015;
 
-		for (size_t i = 0; i < pic.cols; ++i) {
-			for (size_t j = 0; j < pic.rows; ++j) {
-				if (!fill) {
-					if (abs(sqrt((i - x) * (i - x) + (j - y) * (j - y)) / r - 1) < DELTA) {
-						pic.at<Vec3w>(j, i) = BLACK;
-					}
-				} else {
-					if (sqrt((i - x) * (i - x) + (j - y) * (j - y)) / r - 1 < DELTA) {
-						pic.at<Vec3w>(j, i) = BLACK;
-					}
+	for (size_t i = 0; i < pic.cols; ++i) {
+		for (size_t j = 0; j < pic.rows; ++j) {
+			if (!fill) {
+				if (abs(sqrt((i - x) * (i - x) + (j - y) * (j - y)) / r - 1) < DELTA) {
+					pic.at<Vec3w>(j, i) = BLACK;
 				}
-			}
-		}
-	}
-
-	void colorQuadpixel(Mat &pic, double X, double Y, const Vec3w &colour) {
-		pic.at<Vec3w>(static_cast<int>(floor(Y)), static_cast<int>(floor(X))) = colour;
-		pic.at<Vec3w>(static_cast<int>(floor(Y)), static_cast<int>(ceil(X))) = colour;
-		pic.at<Vec3w>(static_cast<int>(ceil(Y)), static_cast<int>(floor(X))) = colour;
-		pic.at<Vec3w>(static_cast<int>(ceil(Y)), static_cast<int>(ceil(X))) = colour;
-	}
-
-	void drawSpiral(Mat &pic, const Point2d& center, double maxRadius) {
-		double radius = maxRadius;
-		double radiusDecrement = 0.01;
-		double angle = M_PI_4;
-		double angleIncrement = 0.005;
-
-		while (radius > 0.5) {
-			double X = radius * cos(angle) + center.x;
-			double Y = radius * sin(angle) + center.y;
-			double ratio = radius/maxRadius;
-			colorQuadpixel(pic, X, Y, Vec3w(ratio*MAX_COL, (1-ratio)*MAX_COL, 4*(1-ratio)*ratio*MAX_COL));
-			radius -= radiusDecrement;
-			angle += angleIncrement;
-		}
-	}
-
-	struct ImplicitLine {
-		double A;
-		double B;
-		double C;
-
-		void computeC(double X, double Y) {
-			C = -(A*X + B*Y);
-		}
-
-		double getValue(double X, double Y) {
-			return A*X + B*Y + C;
-		}
-	};
-
-	double distance(double x1, double y1, double x2, double y2) {
-		return sqrt((x2-x1)*(x2-x1) + (y2-y1)*(y2-y1));
-	}
-
-	void equaliteralTriangle(Mat &pic, double minX, double maxY, double sideLength) {
-		ImplicitLine p{0, -sideLength};
-		p.computeC(minX, maxY);
-		ImplicitLine q{-sqrt(3)/2*sideLength, sideLength/2};
-		q.computeC(minX+sideLength, maxY);
-		ImplicitLine r{sqrt(3)/2*sideLength, sideLength/2};
-		r.computeC(minX, maxY);
-
-		for (size_t i = 0; i < pic.cols; ++i) {
-			for (size_t j = 0; j < pic.rows; ++j) {
-				if ((p.getValue(i, j) >= 0) && (q.getValue(i, j) >= 0) && (r.getValue(i,j) >= 0)) {
-					pic.at<Vec3w>(j,i) = Vec3w(MAX_COL*distance(i,j,minX, maxY)/sideLength,
-					MAX_COL*distance(i,j,minX + sideLength, maxY)/sideLength,
-					MAX_COL*distance(i,j,minX+sideLength/2, 
-					maxY-sqrt(3)/2*sideLength)/sideLength);
-				}
-			}
-		}
-	}
-
-	void ellipse(Mat &pic, double x1, double y1, double x2, double y2, double maxDistance) {
-		double focusDistance = distance(x1, y1, x2, y2);
-
-		for (size_t i = 0; i < pic.cols; ++i) {
-			for (size_t j = 0; j < pic.rows; ++j) {
-				double distanceSum = distance(x1, y1, i, j) + distance(x2, y2, i, j);
-				if (distanceSum <= maxDistance) {
-					double colorIntensity = (distanceSum - focusDistance)/(maxDistance - focusDistance);
-					pic.at<Vec3w>(j,i) = Vec3w(MAX_COL*colorIntensity ,
-											   MAX_COL*colorIntensity,
-											   MAX_COL*colorIntensity);
-				}
-			}
-		}
-	}
-					</div>
-					</pre>
-					<embed src="Results/Taskset4/task4A.png" width="500" height="500">
-					
-					<h3>Filled polygon</h3>
-					<pre>
-					<div class="boxed">
-	void line(Mat &pic, double x1, double y1, double x2, double y2) {
-		double step = 1.0/(abs(y2 - y1) + abs(x2 - x1));
-		double x = x1;
-		double y = y1;
-		for (double lambda = 0.0; lambda <= 1.0; lambda += step) {
-			pic.at<Vec3w>(lround(x),lround(y)) = 0;
-			x += step * (x2-x1);
-			y += step * (y2-y1);
-		}
-	}
-
-	void fillPolygonRec(Mat &pic, unsigned x, unsigned y) {
-		if (pic.at<Vec3w>(y, x).val[0] == MAX_COL) {
-			while (y != 0 && pic.at<Vec3w>(y-1, x).val[0] == MAX_COL) {y -= 1;}
-
-			while (pic.at<Vec3w>(y, x).val[0] == MAX_COL) {
-				pic.at<Vec3w>(y, x) = BLACK;
-				if (x != 0) {
-					fillPolygonRec(pic, x-1, y);
-				}
-				if (x != pic.cols-1) {
-					fillPolygonRec(pic, x+1, y);
-				}
-				y += 1;
-			}
-		}
-	}
-
-	void invertColors(Mat &pic) {
-		for (unsigned i = 0; i < pic.cols; ++i) {
-			for (unsigned j = 0; j < pic.rows; ++j) {
-				if (pic.at<Vec3w>(j, i).val[0] == 0) {
-					pic.at<Vec3w>(j, i) = WHITE;
-				} else {
+			} else {
+				if (sqrt((i - x) * (i - x) + (j - y) * (j - y)) / r - 1 < DELTA) {
 					pic.at<Vec3w>(j, i) = BLACK;
 				}
 			}
 		}
 	}
+}
 
-	void fillPolygon(Mat &pic) {
-		fillPolygonRec(pic, pic.cols/2, pic.rows/2);
-		if ((pic.at<Vec3w>(0,0).val[0] == 0) &&
-			(pic.at<Vec3w>(0,pic.cols-1).val[0] == 0) &&
-			(pic.at<Vec3w>(pic.rows-1,0).val[0] == 0) &&
-			(pic.at<Vec3w>(pic.rows-1,pic.cols-1).val[0] == 0)) {
-			invertColors(pic);
-		}
+void colorQuadpixel(Mat &pic, double X, double Y, const Vec3w &colour) {
+	pic.at<Vec3w>(static_cast<int>(floor(Y)), static_cast<int>(floor(X))) = colour;
+	pic.at<Vec3w>(static_cast<int>(floor(Y)), static_cast<int>(ceil(X))) = colour;
+	pic.at<Vec3w>(static_cast<int>(ceil(Y)), static_cast<int>(floor(X))) = colour;
+	pic.at<Vec3w>(static_cast<int>(ceil(Y)), static_cast<int>(ceil(X))) = colour;
+}
+
+void drawSpiral(Mat &pic, const Point2d& center, double maxRadius) {
+	double radius = maxRadius;
+	double radiusDecrement = 0.01;
+	double angle = M_PI_4;
+	double angleIncrement = 0.005;
+
+	while (radius > 0.5) {
+		double X = radius * cos(angle) + center.x;
+		double Y = radius * sin(angle) + center.y;
+		double ratio = radius/maxRadius;
+		colorQuadpixel(pic, X, Y, Vec3w(ratio*MAX_COL, (1-ratio)*MAX_COL, 4*(1-ratio)*ratio*MAX_COL));
+		radius -= radiusDecrement;
+		angle += angleIncrement;
+	}
+}
+
+struct ImplicitLine {
+	double A;
+	double B;
+	double C;
+
+	void computeC(double X, double Y) {
+		C = -(A*X + B*Y);
 	}
 
-	void polygon(Mat &pic, const std::vector<Point2i> &points) {
-		for (unsigned i = 0; i < points.size()-1; ++i) {
-			line(pic, points[i].x, points[i].y, points[i+1].x, points[i+1].y);
-		}
-		line(pic, points.back().x, points.back().y, points[0].x, points[0].y);
-		fillPolygon(pic);
+	double getValue(double X, double Y) {
+		return A*X + B*Y + C;
 	}
+};
 
-	void swapColor(Vec3w &color) {
-		if (color.val[0] == 0) {
-			color = WHITE;
-		} else {
-			color = BLACK;
+double distance(double x1, double y1, double x2, double y2) {
+	return sqrt((x2-x1)*(x2-x1) + (y2-y1)*(y2-y1));
+}
+
+void equaliteralTriangle(Mat &pic, double minX, double maxY, double sideLength) {
+	ImplicitLine p{0, -sideLength};
+	p.computeC(minX, maxY);
+	ImplicitLine q{-sqrt(3)/2*sideLength, sideLength/2};
+	q.computeC(minX+sideLength, maxY);
+	ImplicitLine r{sqrt(3)/2*sideLength, sideLength/2};
+	r.computeC(minX, maxY);
+
+	for (size_t i = 0; i < pic.cols; ++i) {
+		for (size_t j = 0; j < pic.rows; ++j) {
+			if ((p.getValue(i, j) >= 0) && (q.getValue(i, j) >= 0) && (r.getValue(i,j) >= 0)) {
+				pic.at<Vec3w>(j,i) = Vec3w(MAX_COL*distance(i,j,minX, maxY)/sideLength,
+				MAX_COL*distance(i,j,minX + sideLength, maxY)/sideLength,
+				MAX_COL*distance(i,j,minX+sideLength/2, 
+				maxY-sqrt(3)/2*sideLength)/sideLength);
+			}
 		}
 	}
-					</div>
-					</pre>
-					<embed src="Results/Taskset4/task4B.png" width="500" height="500">
+}
+
+void ellipse(Mat &pic, double x1, double y1, double x2, double y2, double maxDistance) {
+	double focusDistance = distance(x1, y1, x2, y2);
+
+	for (size_t i = 0; i < pic.cols; ++i) {
+		for (size_t j = 0; j < pic.rows; ++j) {
+			double distanceSum = distance(x1, y1, i, j) + distance(x2, y2, i, j);
+			if (distanceSum <= maxDistance) {
+				double colorIntensity = (distanceSum - focusDistance)/(maxDistance - focusDistance);
+				pic.at<Vec3w>(j,i) = Vec3w(MAX_COL*colorIntensity ,
+						MAX_COL*colorIntensity,
+						MAX_COL*colorIntensity);
+			}
+		}
+	}
+}</pre>
+					<embed src="Results/Taskset4/task4A.png" width="500" height="510">
+					<br><br>
+					
+					<h3>Filled polygon</h3>
+					<i>line</i> - draws a line segment between two points
+					<i>fillPolygonRec</i> - recursively fills a polygon starting at point [x,y]
+					<i>invertColors</i> - swaps black and white for all pixels
+					<i>fillPolygon</i> - fills polygon using <i>fillPolygonRec</i> starting in the middle. If all corners have been coloured, the function calls <i>invertColors</i>.
+					<i>polygon</i> - draws a polygon using the array of points 
+					<pre class="code">
+void line(Mat &pic, double x1, double y1, double x2, double y2) {
+	double step = 1.0/(abs(y2 - y1) + abs(x2 - x1));
+	double x = x1;
+	double y = y1;
+	for (double lambda = 0.0; lambda <= 1.0; lambda += step) {
+		pic.at&ltVec3w>(lround(x),lround(y)) = 0;
+		x += step * (x2-x1);
+		y += step * (y2-y1);
+	}
+}
+
+void fillPolygonRec(Mat &pic, unsigned x, unsigned y) {
+	if (pic.at&ltVec3w>(y, x).val[0] == MAX_COL) {
+		while (y != 0 && pic.at<Vec3w>(y-1, x).val[0] == MAX_COL) {y -= 1;}
+
+		while (pic.at&ltVec3w>(y, x).val[0] == MAX_COL) {
+			pic.at&ltVec3w>(y, x) = BLACK;
+			if (x != 0) {
+				fillPolygonRec(pic, x-1, y);
+			}
+			if (x != pic.cols-1) {
+				fillPolygonRec(pic, x+1, y);
+			}
+			y += 1;
+		}
+	}
+}
+
+void invertColors(Mat &pic) {
+	for (unsigned i = 0; i < pic.cols; ++i) {
+		for (unsigned j = 0; j < pic.rows; ++j) {
+			if (pic.at&ltVec3w>(j, i).val[0] == 0) {
+				pic.at&ltVec3w>(j, i) = WHITE;
+			} else {
+				pic.at&ltVec3w>(j, i) = BLACK;
+			}
+		}
+	}
+}
+
+void fillPolygon(Mat &pic) {
+	fillPolygonRec(pic, pic.cols/2, pic.rows/2);
+	if ((pic.at&ltVec3w>(0,0).val[0] == 0) &&
+		(pic.at&ltVec3w>(0,pic.cols-1).val[0] == 0) &&
+		(pic.at&ltVec3w>(pic.rows-1,0).val[0] == 0) &&
+		(pic.at&ltVec3w>(pic.rows-1,pic.cols-1).val[0] == 0)) {
+		invertColors(pic);
+	}
+}
+
+void polygon(Mat &pic, const std::vector&ltPoint2i> &points) {
+	for (unsigned i = 0; i &lt points.size()-1; ++i) {
+		line(pic, points[i].x, points[i].y, points[i+1].x, points[i+1].y);
+	}
+	line(pic, points.back().x, points.back().y, points[0].x, points[0].y);
+	fillPolygon(pic);
+}</pre>
+					<embed src="Results/Taskset4/task4B.png" width="500" height="510">
+					<br><br>
 					
 					<h3>Efects</h3>
-					<pre>
-					<div class="boxed">
-	void optical1(Mat &pic, unsigned squareSize, unsigned circleParam) {
-		unsigned centerX = pic.cols/2;
-		unsigned centerY = pic.rows/2;
-		Vec3w color;
+					Draw a chessboard by rows. Whenever a multiple of <i>circleParam</i> is crossed, the colors are swapped.
+					<pre class="code">
+void swapColor(Vec3w &color) {
+	if (color.val[0] == 0) {
+		color = WHITE;
+	} else {
+		color = BLACK;
+	}
+}					
 
-		for (unsigned x = 0; x < pic.cols; ++x) {
-			for (unsigned y = 0; y < pic.rows; ++y) {
-				color = WHITE;
-				if ((((x / squareSize) % 2) + ((y / squareSize) % 2)) == 1) {
-					swapColor(color);
-				}
-				if (lround(distance(x, y, centerX, centerY) / circleParam) % 2 == 1) {
-					swapColor(color);
-				}
-				pic.at<Vec3w>(y, x) = color;
+void optical1(Mat &pic, unsigned squareSize, unsigned circleParam) {
+	unsigned centerX = pic.cols/2;
+	unsigned centerY = pic.rows/2;
+	Vec3w color;
+
+	for (unsigned x = 0; x < pic.cols; ++x) {
+		for (unsigned y = 0; y < pic.rows; ++y) {
+			color = WHITE;
+			if ((((x / squareSize) % 2) + ((y / squareSize) % 2)) == 1) {
+				swapColor(color);
 			}
+			if (lround(distance(x, y, centerX, centerY) / circleParam) % 2 == 1) {
+				swapColor(color);
+			}
+			pic.at<Vec3w>(y, x) = color;
 		}
 	}
-					</div>
-					</pre>
-					<embed src="Results/Taskset4/task4C-A.png" width="500" height="500">
+}</pre>
+					<embed src="Results/Taskset4/task4C-A.png" width="500" height="510">
+					<br><br><br>
 					
-					<pre>
-					<div class="boxed">
-	void optical2(Mat &pic, double period, unsigned squareParam) {
-		double centerX = pic.cols/2;
-		double centerY = pic.rows/2;
-		double dist;
-		double colorIntensity;
+					Colour is defined by cosine of distance from the center. If a pixel is between even and odd square (based on the distance from center), invert the colours.
+					<pre class="code">
+void optical2(Mat &pic, double period, unsigned squareParam) {
+	double centerX = pic.cols/2;
+	double centerY = pic.rows/2;
+	double dist;
+	double colorIntensity;
 
-		for (unsigned x = 0; x < pic.cols; ++x) {
-			for (unsigned y = 0; y < pic.rows; ++y) {
-				dist = distance(x, y, centerX, centerY);
-				colorIntensity = ((cos(dist/period * 2*M_PI) + 1)/2);
-				if ((lround(max(abs(x-centerX), abs(y-centerY))) / squareParam) % 2 == 1) {
-					colorIntensity = 1- colorIntensity;
-				}
-				pic.at<Vec3w>(y, x) = Vec3w(MAX_COL*colorIntensity, MAX_COL*colorIntensity, MAX_COL*colorIntensity);
+	for (unsigned x = 0; x < pic.cols; ++x) {
+		for (unsigned y = 0; y < pic.rows; ++y) {
+			dist = distance(x, y, centerX, centerY);
+			colorIntensity = ((cos(dist/period * 2*M_PI) + 1)/2);
+			if ((lround(max(abs(x-centerX), abs(y-centerY))) / squareParam) % 2 == 1) {
+				colorIntensity = 1-colorIntensity;
 			}
+			pic.at<Vec3w>(y, x) = Vec3w(MAX_COL*colorIntensity, MAX_COL*colorIntensity, MAX_COL*colorIntensity);
 		}
 	}
-					</div>
-					</pre>
-					<embed src="Results/Taskset4/task4C-B.png" width="500" height="500">
+}</pre>
+					<embed src="Results/Taskset4/task4C-B.png" width="500" height="510">
+					<br><br><br>
 					
-					<pre>
-					<div class="boxed">
-	void optical3(Mat &pic, unsigned squareSize) {
-		const Vec3w GRAY{MAX_COL/2, MAX_COL/2, MAX_COL/2};
-		unsigned lineWidth = 5;
-		unsigned adjustment = squareSize * (pic.cols / squareSize + 1);
+					There are 4 different types of lines and I needed to check whether a point is sufficiently close to any of them. This leads to 8 different conditions (upper and lower bound for each type of line). If a point satisfies any of these conditiones, it is colored gray. After that, small black circled are added. The resulting image is a optical illusion, where the black dots disappear when a person is not directly looking at them.
+					<pre class="code">
+void optical3(Mat &pic, unsigned squareSize) {
+	const Vec3w GRAY{MAX_COL/2, MAX_COL/2, MAX_COL/2};
+	unsigned lineWidth = 5;
+	unsigned adjustment = squareSize * (pic.cols / squareSize + 1);
 
-		for (unsigned x = 0; x < pic.cols; ++x) {
-			for (unsigned y = 0; y < pic.rows; ++y) {
-				if (((x + squareSize/2) % squareSize <= lineWidth)
-				|| ((x + squareSize/2) % squareSize >= squareSize-lineWidth)
-				|| ((y + squareSize/2) % squareSize <= lineWidth)
-				|| ((y + squareSize/2) % squareSize >= squareSize-lineWidth)
-				|| ((x - y + adjustment) % squareSize <= sqrt(2)*lineWidth)
-				|| ((x - y + adjustment) % squareSize >= squareSize-sqrt(2)*lineWidth)
-				|| ((x + y) % squareSize <= sqrt(2)*lineWidth)
-				|| ((x + y) % squareSize >= squareSize-sqrt(2)*lineWidth)) {
-					pic.at<Vec3w>(y,x) = GRAY;
-				}
-			}
-		}
-
-		for (unsigned x = 0; x < pic.cols; ++x) {
-			for (unsigned y = 0; y < pic.rows; ++y) {
-				unsigned closestCenterX = squareSize * (x / squareSize + 1) - squareSize/2;
-				unsigned closestCenterY = squareSize * (y / squareSize + 1) - squareSize/2;
-				if (distance(x, y, closestCenterX, closestCenterY) < 2*lineWidth) {
-					pic.at<Vec3w>(y, x) = BLACK;
-				}
+	for (unsigned x = 0; x < pic.cols; ++x) {
+		for (unsigned y = 0; y < pic.rows; ++y) {
+			if (((x + squareSize/2) % squareSize <= lineWidth)
+			|| ((x + squareSize/2) % squareSize >= squareSize-lineWidth)
+			|| ((y + squareSize/2) % squareSize <= lineWidth)
+			|| ((y + squareSize/2) % squareSize >= squareSize-lineWidth)
+			|| ((x - y + adjustment) % squareSize <= sqrt(2)*lineWidth)
+			|| ((x - y + adjustment) % squareSize >= squareSize-sqrt(2)*lineWidth)
+			|| ((x + y) % squareSize <= sqrt(2)*lineWidth)
+			|| ((x + y) % squareSize >= squareSize-sqrt(2)*lineWidth)) {
+				pic.at<Vec3w>(y,x) = GRAY;
 			}
 		}
 	}
-					</div>
-					</pre>
-					<embed src="Results/Taskset4/task4C-C.png" width="500" height="500">
+
+	for (unsigned x = 0; x < pic.cols; ++x) {
+		for (unsigned y = 0; y < pic.rows; ++y) {
+			unsigned closestCenterX = squareSize * (x / squareSize + 1) - squareSize/2;
+			unsigned closestCenterY = squareSize * (y / squareSize + 1) - squareSize/2;
+			if (distance(x, y, closestCenterX, closestCenterY) < 2*lineWidth) {
+				pic.at<Vec3w>(y, x) = BLACK;
+			}
+		}
+	}
+}</pre>
+					<embed src="Results/Taskset4/task4C-C.png" width="500" height="510">
 					
 					<h3>Riddles</h3>
-					<pre>
-					<div class="boxed">
-	void solveRiddle1(Mat &pic) {
-		for (unsigned x = 0; x < pic.cols; ++x) {
-			for (unsigned y = 0; y < pic.rows; ++y) {
-				pic.at<Vec3w>(y,x).val[0] *= 24;
-				pic.at<Vec3w>(y,x).val[1] = 0;
-				pic.at<Vec3w>(y,x).val[2] = 0;
+					Blue color is multiplied by 24. Other colors are set to 0.
+					<pre class="code">
+void solveRiddle1(Mat &pic) {
+	for (unsigned x = 0; x < pic.cols; ++x) {
+		for (unsigned y = 0; y < pic.rows; ++y) {
+			pic.at<Vec3w>(y,x).val[0] *= 24;
+			pic.at<Vec3w>(y,x).val[1] = 0;
+			pic.at<Vec3w>(y,x).val[2] = 0;
+		}
+	}
+}</pre>
+					<embed src="Results/Taskset4/solution1.png">
+					<br><br>
+					
+					Colour of a pixel is set to the colour of that pixel minus the color of the pixel to the left.
+					<pre class="code">
+void solveRiddle2(Mat &pic) {
+	for (unsigned x = 0; x < pic.cols-1; ++x) {
+		for (unsigned y = 0; y < pic.rows; ++y) {
+			pic.at&ltVec3w>(y,x).val[0] = 40*abs(pic.at&ltVec3w>(y,x).val[0] - pic.at&ltVec3w>(y,x+1).val[0]);
+			pic.at&ltVec3w>(y,x).val[1] = 40*abs(pic.at&ltVec3w>(y,x).val[1] - pic.at&ltVec3w>(y,x+1).val[1]);
+			pic.at&ltVec3w>(y,x).val[2] = 40*abs(pic.at&ltVec3w>(y,x).val[2] - pic.at&ltVec3w>(y,x+1).val[2]);
+		}
+	}
+}</pre>
+					<embed src="Results/Taskset4/solution2.png">
+					<br><br>
+					
+					Xor with pixel level chessboard
+					<pre class="code">
+void solveRiddle3(Mat &pic) {
+	for (unsigned x = 0; x < pic.cols; ++x) {
+		for (unsigned y = 0; y < pic.rows; ++y) {
+			if ((x+y) % 2 == 1) {
+				pic.at&ltVec3w>(y,x).val[0] = MAX_COL - pic.at&ltVec3w>(y,x).val[0];
+				pic.at&ltVec3w>(y,x).val[1] = MAX_COL - pic.at&ltVec3w>(y,x).val[1];
+				pic.at&ltVec3w>(y,x).val[2] = MAX_COL - pic.at&ltVec3w>(y,x).val[2];
 			}
 		}
 	}
-					</div>
-					</pre>
-					<embed src="Results/Taskset4/solution1.png">
-					
-					<pre>
-					<div class="boxed">
-	void solveRiddle2(Mat &pic) {
-		for (unsigned x = 0; x < pic.cols-1; ++x) {
-			for (unsigned y = 0; y < pic.rows; ++y) {
-				pic.at<Vec3w>(y,x).val[0] = 40*abs(pic.at<Vec3w>(y,x).val[0] - pic.at<Vec3w>(y,x+1).val[0]);
-				pic.at<Vec3w>(y,x).val[1] = 40*abs(pic.at<Vec3w>(y,x).val[1] - pic.at<Vec3w>(y,x+1).val[1]);
-				pic.at<Vec3w>(y,x).val[2] = 40*abs(pic.at<Vec3w>(y,x).val[2] - pic.at<Vec3w>(y,x+1).val[2]);
-			}
-		}
-	}					
-					</div>
-					</pre>
-					<embed src="Results/Taskset4/solution2.png">
-					
-					<pre>
-					<div class="boxed">
-	void solveRiddle3(Mat &pic) {
-		for (unsigned x = 0; x < pic.cols; ++x) {
-			for (unsigned y = 0; y < pic.rows; ++y) {
-				if ((x+y) % 2 == 1) {
-					pic.at<Vec3w>(y,x).val[0] = MAX_COL - pic.at<Vec3w>(y,x).val[0];
-					pic.at<Vec3w>(y,x).val[1] = MAX_COL - pic.at<Vec3w>(y,x).val[1];
-					pic.at<Vec3w>(y,x).val[2] = MAX_COL - pic.at<Vec3w>(y,x).val[2];
-				}
-			}
-		}
-	}					
-					</div>
-					</pre>
+}</pre>
 					<embed src="Results/Taskset4/solution3.png">
+					<br><br><br>
 					
 					<h3>Custom riddle</h3>
-The pixels were separated into two groups. One of them received color values of a random multiple of 23. The other group got the same but were increased by one.
-					<pre>
-					<div class="boxed">
-	void convertToRiddle(Mat &pic) {
-		const uint8_t PRIME = 23;
-		const uint8_t ALPHA = MAX_COL_8BIT/PRIME;
-		for (unsigned x = 0; x < pic.cols; ++x) {
-			for (unsigned y = 0; y < pic.rows-1; ++y) {
-				if (pic.at<Vec3b>(y,x).val[0] > pic.at<Vec3b>(y,x).val[1]) {
-					pic.at<Vec3b>(y,x) = Vec3b((rand() % ALPHA) * PRIME + 1,
-							(rand() % ALPHA) * PRIME + 1, (rand() % ALPHA) * PRIME + 1);
-				} else {
-					pic.at<Vec3b>(y,x) = Vec3b((rand() % ALPHA) * PRIME, (rand() % ALPHA) * PRIME,
-					(rand() % ALPHA) * PRIME);
-				}
+The pixels were separated into two groups. One of them received color values of a random multiple of 23. The other group got the same but were increased by one.<br>
+The following images show the original image, the riddle created from the original image and the reconstructed (deciphered) image.
+					<pre class="code">
+void convertToRiddle(Mat &pic) {
+	const uint8_t PRIME = 23;
+	const uint8_t ALPHA = MAX_COL_8BIT/PRIME;
+	for (unsigned x = 0; x < pic.cols; ++x) {
+		for (unsigned y = 0; y < pic.rows-1; ++y) {
+			if (pic.at<Vec3b>(y,x).val[0] > pic.at<Vec3b>(y,x).val[1]) {
+				pic.at<Vec3b>(y,x) = Vec3b((rand() % ALPHA) * PRIME + 1,
+						(rand() % ALPHA) * PRIME + 1, (rand() % ALPHA) * PRIME + 1);
+			} else {
+				pic.at<Vec3b>(y,x) = Vec3b((rand() % ALPHA) * PRIME, (rand() % ALPHA) * PRIME,
+				(rand() % ALPHA) * PRIME);
 			}
 		}
 	}
+}
 
-	void solveRiddle(Mat &pic) {
-		const uint8_t PRIME = 23;
-		const uint8_t ALPHA = MAX_COL_8BIT/PRIME;
-		for (unsigned x = 0; x < pic.cols; ++x) {
-			for (unsigned y = 0; y < pic.rows-1; ++y) {
-				pic.at<Vec3b>(y,x).val[0] = (pic.at<Vec3b>(y,x).val[0] % PRIME) * MAX_COL_8BIT;
-				pic.at<Vec3b>(y,x).val[1] = (pic.at<Vec3b>(y,x).val[1] % PRIME) * MAX_COL_8BIT;
-				pic.at<Vec3b>(y,x).val[2] = (pic.at<Vec3b>(y,x).val[2] % PRIME) * MAX_COL_8BIT;
-			}
+void solveRiddle(Mat &pic) {
+	const uint8_t PRIME = 23;
+	const uint8_t ALPHA = MAX_COL_8BIT/PRIME;
+	for (unsigned x = 0; x < pic.cols; ++x) {
+		for (unsigned y = 0; y < pic.rows-1; ++y) {
+			pic.at<Vec3b>(y,x).val[0] = (pic.at<Vec3b>(y,x).val[0] % PRIME) * MAX_COL_8BIT;
+			pic.at<Vec3b>(y,x).val[1] = (pic.at<Vec3b>(y,x).val[1] % PRIME) * MAX_COL_8BIT;
+			pic.at<Vec3b>(y,x).val[2] = (pic.at<Vec3b>(y,x).val[2] % PRIME) * MAX_COL_8BIT;
 		}
 	}
+}
 
-	auto original = imread("original.png");
-	convertToRiddle(original);
-	imwrite("riddle.png", original);
+auto original = imread("original.png");
+convertToRiddle(original);
+imwrite("riddle.png", original);
 
-	auto riddle = imread("riddle.png");
-	solveRiddle(riddle);
-	imwrite("solution.png", riddle);
-					</div>
-					</pre>
+auto riddle = imread("riddle.png");
+solveRiddle(riddle);
+imwrite("solution.png", riddle);</pre>
 					<embed src="Results/Taskset4/original.png" width="700">
 					<embed src="Results/Taskset4/riddle.png" width="700">
 					<embed src="Results/Taskset4/solution.png" width="700">
 					
 				</main>
-				
-				
-				
+
 				<nav id="sidebar">
 					<div class="widget">
-						<h3>Left heading</h3>
+						<h4>Sets:</h4>
 						<ul>
 						<li><a href="tasks1.html">Task set 1</a></li>
 						<li><a href="tasks2.html">Task set 2</a></li>
@@ -463,6 +455,10 @@ The pixels were separated into two groups. One of them received color values of 
 						<li><a href="tasks6.html">Task set 6</a></li>
 						<li><a href="tasks7.html">Task set 7</a></li>
 						<li><a href="tasks8.html">Task set 8</a></li>
+						<li><a href="tasks9.html">Task set 9</a></li>
+						<li><a href="tasks11.html">Task set 11</a></li>
+						<li><a href="tasks12.html">Task set 12</a></li>
+						<li><a href="tasks13.html">Task set 13</a></li>
 						</ul>
 					</div>
 				</nav>
@@ -475,5 +471,5 @@ The pixels were separated into two groups. One of them received color values of 
 			<div id="footerblurb-inner"></div>
 		</div>
 	</div>
-</body>
+</body>j
 </html>

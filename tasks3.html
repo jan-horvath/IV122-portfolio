@@ -55,22 +55,20 @@
 		#footer-inner { margin:auto; text-align:center; padding:12px; width:970px;}
 		#footer a {color:blue;text-decoration:none;}
 		
-		.boxed {border: 1px solid gray; white-space:pre-wrap;}
+		pre.code {
+			border: 2px solid gray;
+			padding-left: 10px;
+			color: #007700;
+			line-height: 1.5
+		}
+		
+		h3 {
+			font-size: 20px
+		}
 		
 		/* Clear both sides to assist with div alignment  */
 		.clr { clear:both; padding:0; margin:0; width:100%; font-size:0px; line-height:0px;}
 	</style>
-	<script type="text/javascript">
-		/* =============================
-		This script generates sample text for the body content. 
-		You can remove this script and any reference to it. 
-		 ============================= */
-		var bodyText=["The smaller your reality, the more convinced you are that you know everything.", "If the facts don't fit the theory, change the facts.", "The past has no power over the present moment.", "This, too, will pass.", "</p><p>You will not be punished for your anger, you will be punished by your anger.", "Peace comes from within. Do not seek it without.", "<h2>Heading</h2><p>The most important moment of your life is now. The most important person in your life is the one you are with now, and the most important activity in your life is the one you are involved with now."]
-		function generateText(sentenceCount){
-			for (var i=0; i<sentenceCount; i++)
-			document.write(bodyText[Math.floor(Math.random()*7)]+" ")
-		}
-	</script>
 </head>
 <body>
 	<div id="page">
@@ -98,348 +96,374 @@
 			
 				<main id="contentbar">
 					<h3>Drawings</h3>
-					<pre>
-					<div class="boxed">
-	void drawPolygon(Turtle& t, unsigned n, double radius) {
-		t.drawing(false);
-		t.forward(radius);
-		t.drawing(true);
-		t.left(90 + 360.0/n/2);
-		double side = radius*2*sin(M_PI/n);
-		for (size_t i = 0; i < n; ++i) {
-			t.forward(side);
-			t.left(360.0/n);
-		}
-		t.right(90 + 360.0/n/2);
-		t.drawing(false);
-		t.back(radius);
-		t.drawing(true);
+					A test of the turtle graphics.
+					<pre class="code">
+void drawPolygon(Turtle& t, unsigned n, double radius) {
+	t.drawing(false);
+	t.forward(radius);
+	t.drawing(true);
+	t.left(90 + 360.0/n/2);
+	double side = radius*2*sin(M_PI/n);
+	for (size_t i = 0; i < n; ++i) {
+		t.forward(side);
+		t.left(360.0/n);
 	}
-	
-	void drawStar(Turtle& t, unsigned n, double radius) {
-		double half_angle = 90.0 - 360.0/n;
-		double side = 2*radius*cos(half_angle * M_PI/180);
+	t.right(90 + 360.0/n/2);
+	t.drawing(false);
+	t.back(radius);
+	t.drawing(true);
+}
 
-		t.drawing(false);
-		t.forward(radius);
-		t.drawing(true);
-		t.left(180-half_angle);
+void drawStar(Turtle& t, unsigned n, double radius) {
+	double half_angle = 90.0 - 360.0/n;
+	double side = 2*radius*cos(half_angle * M_PI/180);
 
-		for (unsigned i = 0; i < n; ++i) {
-			t.forward(side);
-			t.left(180-2*half_angle);
-		}
-		t.right(180-half_angle);
-		t.drawing(false);
-		t.back(radius);
-		t.drawing(true);
+	t.drawing(false);
+	t.forward(radius);
+	t.drawing(true);
+	t.left(180-half_angle);
+
+	for (unsigned i = 0; i < n; ++i) {
+		t.forward(side);
+		t.left(180-2*half_angle);
 	}
-					</div>
-					</pre>
-					<embed src="Results/Taskset3/task3A.svg" width="300" height="300">
+	t.right(180-half_angle);
+	t.drawing(false);
+	t.back(radius);
+	t.drawing(true);
+}</pre>
+					<embed src="Results/Taskset3/task3A.svg" width="400" height="420">
 
-					<pre>
-					<div class="boxed">
-	void recursiveSquare(Turtle& t, unsigned depth, double sideLength, double param) {
-		t.drawing(false);
-		t.forward(sideLength/2);
-		t.right(90);
-		t.back(sideLength/2);
-		t.drawing(true);
+					<h3>Relative vs. absolute drawing</h3>
+					A) Function for drawing pentagram both ways
+					<pre class="code">
+void drawPentagramR(Turtle& t, double radius) {
+    drawPolygon(t, 5, radius);
+    drawStar(t, 5, radius);
+}
 
-		for (unsigned i = 0; i < depth; ++i) {
-			for (unsigned j = 0; j < 4; ++j) {
-				t.forward(sideLength);
-				t.right(90);
-			}
-			t.forward(sideLength*param);
-			t.right(atan(param/(1-param)), true);
-			sideLength *= sqrt(2*param*param - 2*param + 1);
-		}
-	}
-	
-	recursiveSquare(B1, 150, 50, 1.01);
-	recursiveSquare(B2, 50, 600, 0.1);
-					</div>
-					</pre>
-					<embed src="Results/Taskset3/task3B-B1.svg" width="500" height="500">
-					<embed src="Results/Taskset3/task3B-B2.svg" width="500" height="500">
+void drawPentagramA(SVGFile& file, double radius) {
+    unsigned n = 5;
+    double angle = 360.0/n * M_PI/180;
+
+    for (unsigned i = 0; i < n; ++i) {
+        Point from = {cos(angle*i)*radius, sin(angle*i)*radius};
+        Point to1 = {cos(angle*(i+1))*radius, sin(angle*(i+1))*radius};
+        Point to2 = {cos(angle*floor(i+n/2))*radius, sin(angle*floor(i+n/2))*radius};
+
+        file.addLine(from + Vector{file.m_height/2, file.m_width/2}, to1 + Vector{file.m_height/2, file.m_width/2});
+        file.addLine(from + Vector{file.m_height/2, file.m_width/2}, to2 + Vector{file.m_height/2, file.m_width/2});
+    }
+}</pre>
+					<embed src="Results/Taskset3/task3B-A1.svg" width="400" height="420"><br>
 					
-					<pre>
-					<div class="boxed">
-	void circularLattice(SVGFile& file, double radius, double spacing) {
-		double distanceFromCenter = 0.0;
-		double epsilon = 0.1;
-		radius += epsilon;
-		while (distanceFromCenter <= radius) {
-			double X = distanceFromCenter;
-			double Y = sqrt(radius * radius - X * X);
-			double H = file.m_height/2;
-			double W = file.m_width/2;
+					The drawing B) was easier to create using turtle rather than absolutely, since I do not have to compute the points of contact of two squares.<br>
+					<i>depth</i> - number of squares<br>
+					<i>param</i> - in which part of the line segment should the squares touch (values from 0 to 1)<br>
+					The two lines at the end create the two images below. We can see, that setting the <i>param</i> value to very slightly higher than 1 creates different style of image.<br>
+					<pre class="code">
+void recursiveSquare(Turtle& t, unsigned depth, double sideLength, double param) {
+	t.drawing(false);
+	t.forward(sideLength/2);
+	t.right(90);
+	t.back(sideLength/2);
+	t.drawing(true);
 
-			file.addLine({H - Y, W + X}, {H + Y, W + X});
-			file.addLine({H - Y, W - X}, {H + Y, W - X});
-			file.addLine({H + X, W + Y}, {H + X, W - Y});
-			file.addLine({H - X, W + Y}, {H - X, W - Y});
-
-			distanceFromCenter += spacing;
+	for (unsigned i = 0; i < depth; ++i) {
+		for (unsigned j = 0; j < 4; ++j) {
+			t.forward(sideLength);
+			t.right(90);
 		}
+		t.forward(sideLength*param);
+		t.right(atan(param/(1-param)), true);
+		sideLength *= sqrt(2*param*param - 2*param + 1);
 	}
-					</div>
-					</pre>
-					<embed src="Results/Taskset3/task3B-C.svg" width="500" height="500">
+}
+
+recursiveSquare(B1, 150, 50, 1.01);
+recursiveSquare(B2, 50, 600, 0.1);</pre>
+					<embed src="Results/Taskset3/task3B-B1.svg" width="400" height="420">
+					<embed src="Results/Taskset3/task3B-B2.svg" width="400" height="420">
+					<br><br>
 					
-					<pre>
-					<div class="boxed">
+					The image C) was much easier to create using absolute drawing, since the coordinates of each line lie on a circle.<br>
+					<i>spacing</i> - distance between two closest parallel lines.<br>
+					The function gradually increases distance from 0 to <i>radius</i> by <i>spacing</i>, each time computing the length of the line and then drawing 4 lines, one for each halfaxis.
+					<pre class="code">
+void circularLattice(SVGFile& file, double radius, double spacing) {
+	double distanceFromCenter = 0.0;
+	double epsilon = 0.1;
+	radius += epsilon;
+	while (distanceFromCenter <= radius) {
+		double X = distanceFromCenter;
+		double Y = sqrt(radius * radius - X * X);
+		double H = file.m_height/2;
+		double W = file.m_width/2;
+
+		file.addLine({H - Y, W + X}, {H + Y, W + X});
+		file.addLine({H - Y, W - X}, {H + Y, W - X});
+		file.addLine({H + X, W + Y}, {H + X, W - Y});
+		file.addLine({H - X, W + Y}, {H - X, W - Y});
+
+		distanceFromCenter += spacing;
+	}
+}</pre>
+					<embed src="Results/Taskset3/task3B-C.svg" width="500" height="520">
+					<br><br>
+					
+					The image D) can be easily done by both approaches.
+					<pre class="code">
 	for (unsigned i = 0; i < 30; ++i) {
 		drawPolygon(D, 3, 10*i+4);
-	}
-					</div>
-					</pre>
-					<embed src="Results/Taskset3/task3B-D.svg" width="500" height="500">
-					<pre>
-					<div class="boxed">
-	void polygonBowl(Turtle& t, unsigned n, double radius) {
-		t.drawing(false);
-		t.forward(radius);
+	}</pre>
+					<embed src="Results/Taskset3/task3B-D.svg" width="500" height="520">
+					<br>
+					
+					The last image was created using turtle. The function draws several regular polygons. The ceters of these polygons lie on a circle.<br>
+					<i>n</i> - the number of regular polygons 
+					<i>radius</i> - the radius of centers of regular polygons.
+					The function computes the center of each polygon, moves the turtle to the center and then calls the <i>drawPolygon</i> function.
+					<pre class="code">
+void polygonBowl(Turtle& t, unsigned n, double radius) {
+	t.drawing(false);
+	t.forward(radius);
+	t.left(90 + 360.0/n/2);
+	double side = radius*2*sin(M_PI/n);
+	for (size_t i = 0; i < n; ++i) {
+
 		t.left(90 + 360.0/n/2);
-		double side = radius*2*sin(M_PI/n);
-		for (size_t i = 0; i < n; ++i) {
-
-			t.left(90 + 360.0/n/2);
-			drawPolygon(t, n, radius);
-			t.right(90 + 360.0/n/2);
-
-			t.drawing(false);
-			t.forward(side);
-			t.left(360.0/n);
-		}
+		drawPolygon(t, n, radius);
 		t.right(90 + 360.0/n/2);
-		t.back(radius);
-		t.drawing(true);
+
+		t.drawing(false);
+		t.forward(side);
+		t.left(360.0/n);
 	}
-					</div>
-					</pre>
-					<embed src="Results/Taskset3/task3B-E.svg" width="500" height="500">
+	t.right(90 + 360.0/n/2);
+	t.back(radius);
+	t.drawing(true);
+}
+
+polygonBowl(E, 20, 200);</pre>
+					<embed src="Results/Taskset3/task3B-E.svg" width="500" height="510">
 					
 					<h3>Fratals</h3>
-					<pre>
-					<div class="boxed">
-	void recBush(Turtle& t, double length, unsigned depth, unsigned seed) {
-		if (depth == 0) {return;}
+					This function creates a symetric bush.
+					The diminishing length and angle of branches is randomized based on the seed.
+					<pre class="code">
+void recBush(Turtle& t, double length, unsigned depth, unsigned seed) {
+	if (depth == 0) {return;}
 
+	t.forward(length);
+
+	double angle = seed % 50 + 10;
+	double lengthModifier1 = 0.5 + ((float)(seed % 17)) / 37;
+	double lengthModifier2 = 0.5 + ((float)(seed % 23)) / 51;
+
+	t.left(angle);
+	recBush(t, length*lengthModifier1, depth-1, seed);
+	t.right(2*angle);
+	recBush(t, length*lengthModifier2, depth-1, seed);
+	t.left(angle);
+	t.back(length);
+}</pre>
+
+					<embed src="Results/Taskset3/task3C-A.svg" width="500" height="510">
+					<br>
+					
+					The second function moves turtle to the correct starting position and calls the recursive function three times (one for each side of a triangle).
+					The first (recursive) function repeatedly applies the rule for Koch snowflake <i>depth</i> times.
+					<pre class="code">
+void kochRec(Turtle &t, double length, unsigned depth) {
+	if (depth == 0) {
 		t.forward(length);
-
-		double angle = seed % 50 + 10;
-		double lengthModifier1 = 0.5 + ((float)(seed % 17)) / 37;
-		double lengthModifier2 = 0.5 + ((float)(seed % 23)) / 51;
-
-		t.left(angle);
-		recBush(t, length*lengthModifier1, depth-1, seed);
-		t.right(2*angle);
-		recBush(t, length*lengthModifier2, depth-1, seed);
-		t.left(angle);
-		t.back(length);
-	}				
-					</div>
-					</pre>
-The length and angle of branches is randomized based on the seed.
-					<embed src="Results/Taskset3/task3C-A.svg" width="500" height="500">
-					
-					<pre>
-					<div class="boxed">
-	void kochRec(Turtle &t, double length, unsigned depth) {
-		if (depth == 0) {
-			t.forward(length);
-			return;
-		}
-		kochRec(t, length/3, depth-1);
-		t.left(60);
-		kochRec(t, length/3, depth-1);
-		t.right(120);
-		kochRec(t, length/3, depth-1);
-		t.left(60);
-		kochRec(t, length/3, depth-1);
+		return;
 	}
+	kochRec(t, length/3, depth-1);
+	t.left(60);
+	kochRec(t, length/3, depth-1);
+	t.right(120);
+	kochRec(t, length/3, depth-1);
+	t.left(60);
+	kochRec(t, length/3, depth-1);
+}
 
-	void koch(Turtle& t, double radius, unsigned depth) {
-		t.drawing(false);
-		t.left(60);
-		t.forward(radius);
-		t.right(180-30);
-		t.drawing(true);
+void koch(Turtle& t, double radius, unsigned depth) {
+	t.drawing(false);
+	t.left(60);
+	t.forward(radius);
+	t.right(180-30);
+	t.drawing(true);
 
-		kochRec(t, 2 * radius * sin(M_PI/3), depth);
-		t.right(120);
-		kochRec(t, 2 * radius * sin(M_PI/3), depth);
-		t.right(120);
-		kochRec(t, 2* radius * sin(M_PI/3), depth);
-	}				
-					</div>
-					</pre>
-					<embed src="Results/Taskset3/task3C-B.svg" width="500" height="500">
+	kochRec(t, 2 * radius * sin(M_PI/3), depth);
+	t.right(120);
+	kochRec(t, 2 * radius * sin(M_PI/3), depth);
+	t.right(120);
+	kochRec(t, 2* radius * sin(M_PI/3), depth);
+}</pre>
+					<embed src="Results/Taskset3/task3C-B.svg" width="500" height="510">
+					<br><br><br>
 					
-					<pre>
-					<div class="boxed">
-	void sierpinskiRec(Turtle &t, double radius, unsigned depth) {
-		drawPolygon(t, 3, radius);
-		t.drawing(false);
+					Similar logic as before. The second function moves turtle and creates the initial triangle and then calls the recursive function.
+					The recursive function draws a triangle whose size is defined by <i>radius</i> and then moves the turtle to three different positions (smaller tringle centers) and calls itself with smaller radius.
+					<pre class="code">
+void sierpinskiRec(Turtle &t, double radius, unsigned depth) {
+	drawPolygon(t, 3, radius);
+	t.drawing(false);
 
-		if (depth > 0) {
-			for (unsigned i = 0; i < 3; ++i) {
-				t.drawing(false);
-				t.back(radius);
-				sierpinskiRec(t, radius/2, depth - 1);
-				t.forward(radius);
-				t.left(120);
-			}
-		}
-	}
-
-	void sierpinski(Turtle &t, double radius, unsigned depth) {
-		drawPolygon(t, 3, radius);
-		t.drawing(false);
-		t.left(180);
-
-		if (depth > 0) {
-			sierpinskiRec(t, radius/2, depth - 1);
-		}
-		t.drawing(true);
-	}		
-					</div>
-					</pre>
-					<embed src="Results/Taskset3/task3C-C.svg" width="500" height="500">
-					
-					<pre>
-					<div class="boxed">
-	void polySnowflake(Turtle &t, unsigned polyDegree, double radius, unsigned depth) {
-		if (depth == 0) {
-			if (polyDegree % 2 == 0) {t.left(180.0/polyDegree);}
-			drawPolygon(t, polyDegree, radius);
-			if (polyDegree % 2 == 0) {t.right(180.0/polyDegree);}
-			return;
-		}
-
-		double polygonTriangleHeight = radius/(2+1.0/cos(M_PI/polyDegree));
-		double newRadius = radius - 2 * polygonTriangleHeight;
-
-		if (polyDegree % 2 == 1) {t.left(180.0/polyDegree);}
-		polySnowflake(t, polyDegree, newRadius, depth-1);
-		if (polyDegree % 2 == 1) {t.right(180.0/polyDegree);}
-		t.drawing(false);
-		for (unsigned i = 0; i < polyDegree; ++i) {
-			t.forward(2*polygonTriangleHeight);
-			polySnowflake(t, polyDegree, newRadius, depth-1);
+	if (depth > 0) {
+		for (unsigned i = 0; i < 3; ++i) {
 			t.drawing(false);
-			t.back(2*polygonTriangleHeight);
-			t.left(360.0/polyDegree);
+			t.back(radius);
+			sierpinskiRec(t, radius/2, depth - 1);
+			t.forward(radius);
+			t.left(120);
 		}
 	}
-					</div>
-					</pre>
-					<embed src="Results/Taskset3/task3C-E.svg" width="500" height="500">
+}
+
+void sierpinski(Turtle &t, double radius, unsigned depth) {
+	drawPolygon(t, 3, radius);
+	t.drawing(false);
+	t.left(180);
+
+	if (depth > 0) {
+		sierpinskiRec(t, radius/2, depth - 1);
+	}
+	t.drawing(true);
+}</pre>
+					<embed src="Results/Taskset3/task3C-C.svg" width="500" height="510">
+		
+		
+					An n-regular polygon is divided into n+1 n-regular smaller polygons. One is in the middle and the others are adjacent to it by an common edge. This process is repeated <i>depth</i> times. However, I had trouble with rotations for even and odd <i>polyDegree</i>, which you can see in the pictures.
+					<pre class="code">
+void polySnowflake(Turtle &t, unsigned polyDegree, double radius, unsigned depth) {
+	if (depth == 0) {
+		if (polyDegree % 2 == 0) {t.left(180.0/polyDegree);}
+		drawPolygon(t, polyDegree, radius);
+		if (polyDegree % 2 == 0) {t.right(180.0/polyDegree);}
+		return;
+	}
+
+	double polygonTriangleHeight = radius/(2+1.0/cos(M_PI/polyDegree));
+	double newRadius = radius - 2 * polygonTriangleHeight;
+
+	if (polyDegree % 2 == 1) {t.left(180.0/polyDegree);}
+	polySnowflake(t, polyDegree, newRadius, depth-1);
+	if (polyDegree % 2 == 1) {t.right(180.0/polyDegree);}
+	t.drawing(false);
+	for (unsigned i = 0; i < polyDegree; ++i) {
+		t.forward(2*polygonTriangleHeight);
+		polySnowflake(t, polyDegree, newRadius, depth-1);
+		t.drawing(false);
+		t.back(2*polygonTriangleHeight);
+		t.left(360.0/polyDegree);
+	}
+}</pre>
+					<embed src="Results/Taskset3/task3C-E3.svg" width="350" height="360">
+					<embed src="Results/Taskset3/task3C-E4.svg" width="350" height="360">
+					<embed src="Results/Taskset3/task3C-E5.svg" width="350" height="360">
+					<embed src="Results/Taskset3/task3C-E6.svg" width="350" height="360">
 					
 					<h3>Custom fractals</h3>
 					
-					<pre>
-					<div class="boxed">
-	void drawLadder(SVGFile& file, Point A, Point B, Point C, Point D, double frequency) {
-		file.addLine(A, B, COLORS[1]);
-		file.addLine(C, D, COLORS[1]);
+					This is what the product of the function <i>polySnowflake</i> for <i>polydegree</i> should have looked like.<br>
+					Here I have added the function <i>drawHexaladder</i> which creates ladder between two non-adjacent, non-opposite sides of a hexagon.
+					<pre class="code">
+void drawLadder(SVGFile& file, Point A, Point B, Point C, Point D, double frequency) {
+	file.addLine(A, B, COLORS[1]);
+	file.addLine(C, D, COLORS[1]);
 
-		double lambda = 0.0;
-		while (lambda < 1.0) {
-			file.addLine(A + ((B - A) * lambda), C + ((D - C) * lambda), COLORS[13]);
-			lambda += frequency;
-		}
-		file.addLine(B, D, COLORS[13]);
+	double lambda = 0.0;
+	while (lambda < 1.0) {
+		file.addLine(A + ((B - A) * lambda), C + ((D - C) * lambda), COLORS[13]);
+		lambda += frequency;
+	}
+	file.addLine(B, D, COLORS[13]);
+}
+
+void drawHexaladder(SVGFile& file, Point center, double radius) {
+	for (unsigned i = 0; i < 6; ++i) {
+		Point A = {radius*cos(i*M_PI/3) + center.X, radius * sin(i*M_PI/3) + center.Y};
+		Point B = {radius*cos((i+1)*M_PI/3) + center.X, radius * sin((i+1)*M_PI/3) + center.Y};
+		Point C = {radius*cos((i+2)*M_PI/3) + center.X, radius * sin((i+2)*M_PI/3) + center.Y};
+		Point D = {radius*cos((i+3)*M_PI/3) + center.X, radius * sin((i+3)*M_PI/3) + center.Y};
+		drawLadder(file, A, B, C, D, 1.0/3);
+	}
+}
+
+void customFractal1(SVGFile& file, Point center, double radius, unsigned depth) {
+	if (depth == 0) {
+		drawHexaladder(file, center, radius);
+		return;
 	}
 
-	void drawHexaladder(SVGFile& file, Point center, double radius) {
-		for (unsigned i = 0; i < 6; ++i) {
-			Point A = {radius*cos(i*M_PI/3) + center.X, radius * sin(i*M_PI/3) + center.Y};
-			Point B = {radius*cos((i+1)*M_PI/3) + center.X, radius * sin((i+1)*M_PI/3) + center.Y};
-			Point C = {radius*cos((i+2)*M_PI/3) + center.X, radius * sin((i+2)*M_PI/3) + center.Y};
-			Point D = {radius*cos((i+3)*M_PI/3) + center.X, radius * sin((i+3)*M_PI/3) + center.Y};
-			drawLadder(file, A, B, C, D, 1.0/3);
-		}
+	double centerRadius = sqrt(3) * 1.0/3 * radius;
+	customFractal1(file, center, radius/3, depth-1);
+	for (unsigned i = 0; i < 6; ++i) {
+		Point newCenter = {centerRadius*cos(i*M_PI/3 + M_PI/6) + center.X, 
+			centerRadius * sin(i*M_PI/3 + M_PI/6) + center.Y};
+		customFractal1(file, newCenter, radius/3, depth-1);
+	}
+}</pre>
+					<embed src="Results/Taskset3/task3D-1.svg" width="600" height="610">
+					
+					This is a line segment transformed using fractal which looks like a right-turning hook.
+					<pre class="code">
+void customFractal2(Turtle &t, double length, unsigned depth) {
+	if (depth == 0) {
+		t.forward(length);
+		return;
 	}
 
-	void customFractal1(SVGFile& file, Point center, double radius, unsigned depth) {
-		if (depth == 0) {
-			drawHexaladder(file, center, radius);
-			return;
-		}
+	double quarter = length/4;
 
-		double centerRadius = sqrt(3) * 1.0/3 * radius;
-		customFractal1(file, center, radius/3, depth-1);
-		for (unsigned i = 0; i < 6; ++i) {
-			Point newCenter = {centerRadius*cos(i*M_PI/3 + M_PI/6) + center.X, 
-				centerRadius * sin(i*M_PI/3 + M_PI/6) + center.Y};
-			customFractal1(file, newCenter, radius/3, depth-1);
-		}
-	}						
-					</div>
-					</pre>
-					<embed src="Results/Taskset3/task3D-1.svg" width="500" height="500">
+	customFractal2(t, 1.5*quarter - quarter/sqrt(2), depth-1);
+	t.left(45);
+	customFractal2(t, length/4, depth-1);
+	t.left(45);
+	customFractal2(t, length/4, depth-1);
+	t.right(45);
+	customFractal2(t, length/4, depth-1);
+	t.right(45);
+	customFractal2(t, length/4, depth-1);
+	t.right(180-45);
+	customFractal2(t, length/4, depth-1);
+	t.left(45);
+	customFractal2(t, length/4, depth-1);
+	t.left(45);
+	customFractal2(t, length/4, depth-1);
+	t.left(45);
+	customFractal2(t, 1.5*quarter - quarter/sqrt(2), depth-1);
+}</pre>
+					<embed src="Results/Taskset3/task3D-2.svg" width="600" height="610">
 					
-					<pre>
-					<div class="boxed">
-	void customFractal2(Turtle &t, double length, unsigned depth) {
-		if (depth == 0) {
-			t.forward(length);
-			return;
-		}
+					One application of this code transforms a line into "test with antenna". I have applied this function four times to four to four lines forming a square. The result is a cloud like fractal.<br>
+					In the first picture, you can see a single application on one vertical line. In the second picture, you can see four lines of a circle transformed by one application. The last picture contains the resule of 4 applications on a square.
+					<pre class="code">
+void customFractal3(Turtle &t, double length, unsigned depth) {
+	if (depth == 0) {
+		t.forward(length);
+		return;
+	}
 
-		double quarter = length/4;
+	double quarter = length/4;
 
-		customFractal2(t, 1.5*quarter - quarter/sqrt(2), depth-1);
-		t.left(45);
-		customFractal2(t, length/4, depth-1);
-		t.left(45);
-		customFractal2(t, length/4, depth-1);
-		t.right(45);
-		customFractal2(t, length/4, depth-1);
-		t.right(45);
-		customFractal2(t, length/4, depth-1);
-		t.right(180-45);
-		customFractal2(t, length/4, depth-1);
-		t.left(45);
-		customFractal2(t, length/4, depth-1);
-		t.left(45);
-		customFractal2(t, length/4, depth-1);
-		t.left(45);
-		customFractal2(t, 1.5*quarter - quarter/sqrt(2), depth-1);
-	}						
-					</div>
-					</pre>
-					<embed src="Results/Taskset3/task3D-2.svg" width="500" height="500">
-					
-					<pre>
-					<div class="boxed">
-	void customFractal3(Turtle &t, double length, unsigned depth) {
-		if (depth == 0) {
-			t.forward(length);
-			return;
-		}
-
-		double quarter = length/4;
-
-		customFractal3(t, quarter, depth-1);
-		t.left(45);
-		customFractal3(t, quarter*sqrt(2), depth-1);
-		t.left(45);
-		customFractal3(t, quarter, depth-1);
-		t.right(180);
-		customFractal3(t, quarter, depth-1);
-		t.left(45);
-		customFractal3(t, quarter*sqrt(2), depth-1);
-		t.left(45);
-		customFractal3(t, quarter, depth-1);
-	}						
-					</div>
-					</pre>
-					<embed src="Results/Taskset3/task3D-3.svg" width="500" height="500">
+	customFractal3(t, quarter, depth-1);
+	t.left(45);
+	customFractal3(t, quarter*sqrt(2), depth-1);
+	t.left(45);
+	customFractal3(t, quarter, depth-1);
+	t.right(180);
+	customFractal3(t, quarter, depth-1);
+	t.left(45);
+	customFractal3(t, quarter*sqrt(2), depth-1);
+	t.left(45);
+	customFractal3(t, quarter, depth-1);
+}</pre>
+					<embed src="Results/Taskset3/task3D-3comp.svg" width="350" height="360">
+					<embed src="Results/Taskset3/task3D-3comp2.svg" width="350" height="360">
+					<embed src="Results/Taskset3/task3D-3.svg" width="750" height="760">
 					
 				</main>
 				
@@ -447,7 +471,7 @@ The length and angle of branches is randomized based on the seed.
 				
 				<nav id="sidebar">
 					<div class="widget">
-						<h3>Left heading</h3>
+						<h4>Sets:</h4>
 						<ul>
 						<li><a href="tasks1.html">Task set 1</a></li>
 						<li><a href="tasks2.html">Task set 2</a></li>
@@ -457,6 +481,10 @@ The length and angle of branches is randomized based on the seed.
 						<li><a href="tasks6.html">Task set 6</a></li>
 						<li><a href="tasks7.html">Task set 7</a></li>
 						<li><a href="tasks8.html">Task set 8</a></li>
+						<li><a href="tasks9.html">Task set 9</a></li>
+						<li><a href="tasks11.html">Task set 11</a></li>
+						<li><a href="tasks12.html">Task set 12</a></li>
+						<li><a href="tasks13.html">Task set 13</a></li>
 						</ul>
 					</div>
 				</nav>
