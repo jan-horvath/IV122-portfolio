@@ -55,7 +55,16 @@
 		#footer-inner { margin:auto; text-align:center; padding:12px; width:970px;}
 		#footer a {color:blue;text-decoration:none;}
 		
-		.boxed {border: 1px solid gray; white-space:pre-wrap;}
+		pre.code {
+			border: 2px solid gray;
+			padding-left: 10px;
+			color: #007700;
+			line-height: 1.5
+		}
+		
+		h3 {
+			font-size: 20px
+		}
 		
 		/* Clear both sides to assist with div alignment  */
 		.clr { clear:both; padding:0; margin:0; width:100%; font-size:0px; line-height:0px;}
@@ -87,101 +96,98 @@
 			
 				<main id="contentbar">
 					<h3>Line segment intersections</h3>
-					<pre>
-					<div class="boxed">
-		vector&ltLineSegment&gt generateLineSegments(SVGFile& file, unsigned lineCount, double length) {
-		vector&ltLineSegment&gt LS;
-		for (unsigned i = 0; i < lineCount; ++i) {
-			Point A = generatePoint(0, file.m_width, 0, file.m_height);
-			Point B = generatePoint(0, file.m_width, 0, file.m_height);;
-			LS.push_back({A, A + (B-A).norm()*length});
-			file.addLine(LS.back().P1, LS.back().P2);
-		}
-		return std::move(LS);
+					First function generates <i>lineCount</i> line segments of length <i>length</i>. The line segments are created as follows: Two points are chosen, the line between them is normalized (length is set to 1) and then scaled up (multiplied) by <i>length</i>.<br>
+					Second function iterates over all unordered pairs of lines and computes their intersection. If there is no intersection, it returns a point with coordinates set to max double, which is interpreted as no intersection by the program.
+					<pre class="code">
+vector&ltLineSegment&gt generateLineSegments(SVGFile& file, unsigned lineCount, double length) {
+	vector&ltLineSegment&gt LS;
+	for (unsigned i = 0; i < lineCount; ++i) {
+		Point A = generatePoint(0, file.m_width, 0, file.m_height);
+		Point B = generatePoint(0, file.m_width, 0, file.m_height);;
+		LS.push_back({A, A + (B-A).norm()*length});
+		file.addLine(LS.back().P1, LS.back().P2);
 	}
+	return std::move(LS);
+}
 
-	void detectIntersections(SVGFile& file, vector&ltLineSegment&gt& lineSegments) {
-		for (size_t i = 0; i < lineSegments.size(); ++i) {
-			for (size_t j = i+1; j < lineSegments.size(); ++j) {
-				Point p = lineSegments[i].intersect(lineSegments[j]);
-				if (p.X != LineSegment::NO_INTERSECTION) {
-					file.addCircle(p, 3, true);
-				}
+void detectIntersections(SVGFile& file, vector&ltLineSegment&gt& lineSegments) {
+	for (size_t i = 0; i < lineSegments.size(); ++i) {
+		for (size_t j = i+1; j < lineSegments.size(); ++j) {
+			Point p = lineSegments[i].intersect(lineSegments[j]);
+			if (p.X != LineSegment::NO_INTERSECTION) {
+				file.addCircle(p, 3, true);
 			}
 		}
 	}
-					</div>
-					</pre>
-					<embed src="Results/Taskset5/task5A.svg" width="500" height="500">
+}</pre>
+					<embed src="Results/Taskset5/task5A.svg" width="650" height="660"><br><br><br>
 					
 					<h3>Triangulation</h3>
-					<pre>
-					<div class="boxed">
-	bool segmentIntersectsOthers(const LineSegment& segment, const vector&ltLineSegment&gt& segments) {
-		for (const auto& s : segments) {
-			if (segment.intersect(s).X != LineSegment::NO_INTERSECTION) {
-				return true;
-			}
-		}
-		return false;
-	}
-
-	bool isShorterThan(const LineSegment& s1, const LineSegment& s2) {
-		return s1.getLength() < s2.getLength();
-	}
-
-	void triangulate(SVGFile& file, const vector&ltPoint&gt &points, bool shouldBeSorted) {
-		vector&ltLineSegment&gt segments = getLineSegmentsFromPoints(points);
-		vector&ltLineSegment&gt drawn;
-
-		if (shouldBeSorted) {
-			std::sort(segments.begin(), segments.end(), isShorterThan);
-		}
-
-		for (const auto& segment : segments) {
-			if (!segmentIntersectsOthers(segment, drawn)) {
-				file.addLine(segment.P1, segment.P2);
-				drawn.push_back(segment);
-			}
+					The <i>triangulate</i> function receives points, creates list of line segments from them and sorts these line segments by their length (if <i>shouldBeSorted</i> is set to true). Then the function adds the line segments to the picture in order iff they do not intersect other line segments that have already been added. To check this condition, it calls the <i>segmentIntersectsOthers</i> function.<br>
+					The points in the pictures below are lattice with missing points and some noise, lattice with noise, centered normal distribution in X and Y coordinates and points on a circle respectively.
+					<pre class="code">
+bool segmentIntersectsOthers(const LineSegment& segment, const vector&ltLineSegment&gt& segments) {
+	for (const auto& s : segments) {
+		if (segment.intersect(s).X != LineSegment::NO_INTERSECTION) {
+			return true;
 		}
 	}
-					</div>
-					</pre>
+	return false;
+}
+
+bool isShorterThan(const LineSegment& s1, const LineSegment& s2) {
+	return s1.getLength() < s2.getLength();
+}
+
+void triangulate(SVGFile& file, const vector&ltPoint&gt &points, bool shouldBeSorted) {
+	vector&ltLineSegment&gt segments = getLineSegmentsFromPoints(points);
+	vector&ltLineSegment&gt drawn;
+
+	if (shouldBeSorted) {
+		std::sort(segments.begin(), segments.end(), isShorterThan);
+	}
+
+	for (const auto& segment : segments) {
+		if (!segmentIntersectsOthers(segment, drawn)) {
+			file.addLine(segment.P1, segment.P2);
+			drawn.push_back(segment);
+		}
+	}
+}</pre>
 					<embed src="Results/Taskset5/task5B-0.svg" width="400" height="400">
 					<embed src="Results/Taskset5/task5B-1.svg" width="400" height="400">
 					<embed src="Results/Taskset5/task5B-2.svg" width="400" height="400">
-					<embed src="Results/Taskset5/task5B-3.svg" width="400" height="400">
+					<embed src="Results/Taskset5/task5B-3.svg" width="400" height="400"><br><br><br>
 					
 					<h3>Convex hull</h3>
-					<pre>
-					<div class="boxed">
-	void konvexHullJarvis(SVGFile& file, const vector&ltPoint&gt &points) {
-		Point leftmost = *std::max_element(points.begin(), points.end(),
-		[](const Point& a, const Point& b) {return a.X > b.X;});
-		
-		Vector A{0, 1};
-		Vector B{0, 1};
-		Point latest = leftmost;
-		bool loopStart = false;
-		while (latest != leftmost || !loopStart) {
-			loopStart = true;
-			double greatestAngle = A.getAngle(B);
-			Point pointWithGreatestAngle = latest;
-			for (const Point& p: points) {
-				if (A.getAngle(p - latest) > greatestAngle) {
-					pointWithGreatestAngle = p;
-					B = pointWithGreatestAngle - latest;
-					greatestAngle = A.getAngle(B);
-				}
+					Implementation of the Jarvis algorithm. The algorithm finds the convex hull by repeatedly finding a point which forms the biggest angle with two previous points.<br>
+					The pictures are sorted in the same way as in Triangulation.
+					<pre class="code">
+void konvexHullJarvis(SVGFile& file, const vector&ltPoint&gt &points) {
+	Point leftmost = *std::max_element(points.begin(), points.end(),
+	[](const Point& a, const Point& b) {return a.X > b.X;});
+
+	Vector A{0, 1};
+	Vector B{0, 1};
+	Point latest = leftmost;
+	bool loopStart = false;
+	while (latest != leftmost || !loopStart) {
+		loopStart = true;
+		double greatestAngle = A.getAngle(B);
+		Point pointWithGreatestAngle = latest;
+		for (const Point& p: points) {
+			if (A.getAngle(p - latest) > greatestAngle) {
+				pointWithGreatestAngle = p;
+				B = pointWithGreatestAngle - latest;
+				greatestAngle = A.getAngle(B);
 			}
-			file.addLine(latest, pointWithGreatestAngle);
-			latest = pointWithGreatestAngle;
-			A = {-B.X, -B.Y};
-			B = A;
 		}
-	}				
-					</div>
-					</pre>
+		file.addLine(latest, pointWithGreatestAngle);
+		latest = pointWithGreatestAngle;
+		A = {-B.X, -B.Y};
+		B = A;
+	}
+}</pre>
 					<embed src="Results/Taskset5/task5C-0.svg" width="400" height="400">
 					<embed src="Results/Taskset5/task5C-1.svg" width="400" height="400">
 					<embed src="Results/Taskset5/task5C-2.svg" width="400" height="400">
@@ -193,7 +199,7 @@
 				
 				<nav id="sidebar">
 					<div class="widget">
-						<h3>Left heading</h3>
+						<h4>Sets:</h4>
 						<ul>
 						<li><a href="tasks1.html">Task set 1</a></li>
 						<li><a href="tasks2.html">Task set 2</a></li>
@@ -203,6 +209,10 @@
 						<li><a href="tasks6.html">Task set 6</a></li>
 						<li><a href="tasks7.html">Task set 7</a></li>
 						<li><a href="tasks8.html">Task set 8</a></li>
+						<li><a href="tasks9.html">Task set 9</a></li>
+						<li><a href="tasks11.html">Task set 11</a></li>
+						<li><a href="tasks12.html">Task set 12</a></li>
+						<li><a href="tasks13.html">Task set 13</a></li>
 						</ul>
 					</div>
 				</nav>

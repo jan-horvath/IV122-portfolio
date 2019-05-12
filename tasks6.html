@@ -55,7 +55,16 @@
 		#footer-inner { margin:auto; text-align:center; padding:12px; width:970px;}
 		#footer a {color:blue;text-decoration:none;}
 		
-		.boxed {border: 1px solid gray; white-space:pre-wrap;}
+		pre.code {
+			border: 2px solid gray;
+			padding-left: 10px;
+			color: #007700;
+			line-height: 1.5
+		}
+		
+		h3 {
+			font-size: 20px
+		}
 		
 		/* Clear both sides to assist with div alignment  */
 		.clr { clear:both; padding:0; margin:0; width:100%; font-size:0px; line-height:0px;}
@@ -87,56 +96,54 @@
 			
 				<main id="contentbar">
 					<h3>Chaos game</h3>
-					<pre>
-					<div class="boxed">
-	void drawFixedPoints(Mat &pic, const vector&ltPoint2d> &fixedPoints) {
-		for (const auto& fp: fixedPoints) {
-			for (int x = (int)fp.x - 5; x <= fp.x + 5; ++x) {
-				for (int y = (int)fp.y - 5; y <= fp.y + 5; ++y) {
-					pic.at&ltVec3w>(y, x) = RED;
-				}
+					<i>chaosGame</i> - Takes fixed points and their weights as arguments. Throws away first 1% of point and then starts colouring them. The colour of a point is based on the index of last chosen point. The do-while cycle chooses either different point that the one in the last iteration or any point. At the end, the fixed points are added in red.<br>
+					<i>chaosGameRegularPolygon</i> - Special case of previous function. All points are arranged into a regular polygon, therefore only weights are needed as an input.
+					<pre class="code">
+void drawFixedPoints(Mat &pic, const vector&ltPoint2d> &fixedPoints) {
+	for (const auto& fp: fixedPoints) {
+		for (int x = (int)fp.x - 5; x <= fp.x + 5; ++x) {
+			for (int y = (int)fp.y - 5; y <= fp.y + 5; ++y) {
+				pic.at&ltVec3w>(y, x) = RED;
 			}
 		}
 	}
+}
 
-	void chaosGame(Mat &pic, const vector&ltdouble> &fixedPointWeights, 
-			const vector&ltPoint2d> &fixedPoints, size_t iterations) {
-		assert(fixedPoints.size() == fixedPointWeights.size());
-		size_t count = fixedPoints.size();
+void chaosGame(Mat &pic, const vector&ltdouble> &fixedPointWeights, 
+		const vector&ltPoint2d> &fixedPoints, size_t iterations) {
+	assert(fixedPoints.size() == fixedPointWeights.size());
+	size_t count = fixedPoints.size();
 
-		Point2d point{0,0};
-		size_t past_FP_index = 0;
-		size_t FP_index = 0;
-		for (unsigned i = 0; i < iterations; ++i) {
-			do {
-				FP_index = rand() % count;
-			//} while (false);
-			} while (FP_index == past_FP_index);
-			point = point + (fixedPoints[FP_index] - point) * (1-fixedPointWeights[FP_index]);
-			if (i > iterations/100) {
-				pic.at&ltVec3w>((int) lround(point.y), (int) lround(point.x)) = COLORS[FP_index];
-			}
-			past_FP_index = FP_index;
+	Point2d point{0,0};
+	size_t past_FP_index = 0;
+	size_t FP_index = 0;
+	for (unsigned i = 0; i < iterations; ++i) {
+		do {
+			FP_index = rand() % count;
+		//} while (false);
+		} while (FP_index == past_FP_index);
+		point = point + (fixedPoints[FP_index] - point) * (1-fixedPointWeights[FP_index]);
+		if (i > iterations/100) {
+			pic.at&ltVec3w>((int) lround(point.y), (int) lround(point.x)) = COLORS[FP_index];
 		}
-
-		drawFixedPoints(pic, fixedPoints);
+		past_FP_index = FP_index;
 	}
 
-	void chaosGameRegularPolygon(Mat &pic, const vector&ltdouble> &fixedPointWeights, double radius, size_t iterations) {
-		vector&ltPoint2d> fixedPoints;
-		unsigned polygonNumber = fixedPointWeights.size();
+	drawFixedPoints(pic, fixedPoints);
+}
 
-		for (unsigned i = 0; i < fixedPointWeights.size(); ++i) {
-			fixedPoints.push_back(
-				{cos(i * 2*M_PI/polygonNumber) * radius + (double)pic.cols/2,
-				sin(i * 2*M_PI/polygonNumber) * radius + (double)pic.rows/2});
-		}
+void chaosGameRegularPolygon(Mat &pic, const vector&ltdouble> &fixedPointWeights, double radius, size_t iterations) {
+	vector&ltPoint2d> fixedPoints;
+	unsigned polygonNumber = fixedPointWeights.size();
 
-		chaosGame(pic, fixedPointWeights, fixedPoints, iterations);
+	for (unsigned i = 0; i < fixedPointWeights.size(); ++i) {
+		fixedPoints.push_back(
+			{cos(i * 2*M_PI/polygonNumber) * radius + (double)pic.cols/2,
+			sin(i * 2*M_PI/polygonNumber) * radius + (double)pic.rows/2});
 	}
-					</div>
-					</pre>
-					<b>All colors are assigned based on the index of last chosen point.<br></b>
+
+	chaosGame(pic, fixedPointWeights, fixedPoints, iterations);
+}</pre>
 					Hexagon: r = 1/2, The same point cannot be chosen twice in a row.<br>
 					<embed src="Results/Taskset6/task6A.png" width="700" height="700">
 					<br>Hexagon: r = 1/2 (No point choice restriction)<br>
@@ -158,151 +165,278 @@
 					<embed src="Results/Taskset6/task6A5.png" width="700" height="700">
 					
 					<h3>Feigenbaum's diagram</h3>
-					<pre>
-					<div class="boxed">
-	vector&ltdouble> getLogisticPattern(double r) {
-		vector&ltdouble> pattern;
-		double x = 0.5;
+					<i>getLogisticPattern</i> - Returns all numbers that are computed using the logistic function in the first 1000 iterations (without the first 100).<br>
+					<i>feigenbaum</i> - Calls <i>getLogisticPattern</i> for every r between <i>rmin</i> and <i>rmax</i> and plots the result. The graph can be zoomed in using the <i>rmin, rmax, xmin</i> and <i>xmax</i> parameters.<br>
+					If a number was in the logistic pattern multiple times, its pixel color is darker.
+					<pre class="code">
+vector&ltdouble> getLogisticPattern(double r) {
+	vector&ltdouble> pattern;
+	double x = 0.5;
 
-		for (unsigned i = 0; i < 1000; ++i) {
-			x = 4 * r * x * (1-x);
-			if (i > 100) {pattern.push_back(x);}
-		}
-		return move(pattern);
+	for (unsigned i = 0; i < 1000; ++i) {
+		x = 4 * r * x * (1-x);
+		if (i > 100) {pattern.push_back(x);}
 	}
+	return move(pattern);
+}
 
-	void feigenbaum(Mat &pic, double xmin, double xmax, double rmin, double rmax) {
-		double r_increment = (rmax - rmin) / pic.cols;
-		double x_increment = (xmax - xmin) / pic.rows;
+void feigenbaum(Mat &pic, double xmin, double xmax, double rmin, double rmax) {
+	double r_increment = (rmax - rmin) / pic.cols;
+	double x_increment = (xmax - xmin) / pic.rows;
 
-		for (unsigned col = 0; col < pic.cols; ++col) {
-			auto pattern = getLogisticPattern(rmin + col*r_increment);
-			for (double num : pattern) {
-				if ((xmin < num) && (num < xmax)) {
-					auto &color = pic.at&ltVec3w>((int)((num - xmin)/(xmax - xmin) * pic.rows), col);
-					if (color.val[0] == MAX_COL) {
-						color = GREEN;
-						//pic.at&ltVec3w>((int)((num - xmin)/(xmax - xmin) * pic.rows), col) = BLACK;
-					} else if (color[1] != 0) {
-						color -= Vec3w(0, 13107, 0);
-					}
+	for (unsigned col = 0; col < pic.cols; ++col) {
+		auto pattern = getLogisticPattern(rmin + col*r_increment);
+		for (double num : pattern) {
+			if ((xmin < num) && (num < xmax)) {
+				auto &color = pic.at&ltVec3w>((int)((num - xmin)/(xmax - xmin) * pic.rows), col);
+				if (color.val[0] == MAX_COL) {
+					color = GREEN;
+					//pic.at&ltVec3w>((int)((num - xmin)/(xmax - xmin) * pic.rows), col) = BLACK;
+				} else if (color[1] != 0) {
+					color -= Vec3w(0, 13107, 0);
 				}
 			}
 		}
-	}					
-					</div>
-					</pre>
+	}
+}</pre>
 					<embed src="Results/Taskset6/feigenbaum1.png" width="800" height="450">
 					<embed src="Results/Taskset6/feigenbaum2.png" width="800" height="450">
 					<embed src="Results/Taskset6/feigenbaum3.png" width="800" height="450">
-					<embed src="Results/Taskset6/feigenbaum4.png" width="800" height="450">
+					<embed src="Results/Taskset6/feigenbaum4.png" width="800" height="450"><br><br><br>
 					
 					<h3>Stochastic L-system</h3>
-					<pre>
-					<div class="boxed">
-	class LSystem {
-		public:
-			LSystem() = delete;
+					The L-System class contains: Turtle, transltion rules (pair of char and list of strings), drawing rules (pair of char and a function pointer). The translation rules are probabilistic. That is why the translation rules consist of pairs of char and a list of strings.<br>
+					The system supports addition of translation rule and an addition of drawing rule for functions with upto (and including) 2 parameters. (I know I could have made this for any number of parameters, but I was not able to compile it.)<br>
+					The function <i>translate</i> rewrites the whole string <i>depth</i> times using translation rules.<br>
+					The function <i>drawString</i> draws the input string using rules for drawing.
+					<pre class="code">
+class LSystem {
+	public:
+		LSystem() = delete;
 
-			LSystem(const string &filename, double height, double width) : m_turtle(filename, height, width) {}
+		LSystem(const string &filename, double height, double width) : m_turtle(filename, height, width) {}
 
-			void addTranslationRule(char c, const vector&ltstring> &s) {
-				m_translationRules.insert({c, s});
-			}
+		void addTranslationRule(char c, const vector&ltstring> &s) {
+			m_translationRules.insert({c, s});
+		}
 
-			void addDrawingRule(char c, const function&ltvoid(Turtle*)>& func) {
-				m_drawingRules.insert(std::pair&ltchar, const function&ltvoid()>>(c, bind(func, &m_turtle)));
-			}
+		void addDrawingRule(char c, const function&ltvoid(Turtle*)>& func) {
+			m_drawingRules.insert(std::pair&ltchar, const function&ltvoid()>>(c, bind(func, &m_turtle)));
+		}
 
-			template &ltclass T>
-			void addDrawingRule(char c, const function&ltvoid(Turtle*, T)>& func, T argument) {
-				m_drawingRules.insert(std::pair<char, const function<void()>>(c, bind(func, &m_turtle, argument)));
-			}
+		template &ltclass T>
+		void addDrawingRule(char c, const function&ltvoid(Turtle*, T)>& func, T argument) {
+			m_drawingRules.insert(std::pair<char, const function<void()>>(c, bind(func, &m_turtle, argument)));
+		}
 
-			template &ltclass T, class U>
-			void addDrawingRule(char c, const function&ltvoid(Turtle*, T, U)>& func, T arg1, U arg2) {
-				m_drawingRules.insert(
-				std::pair&ltchar, const function&ltvoid()>>(c, bind(func, &m_turtle, arg1, arg2)));
-			}
+		template &ltclass T, class U>
+		void addDrawingRule(char c, const function&ltvoid(Turtle*, T, U)>& func, T arg1, U arg2) {
+			m_drawingRules.insert(
+			std::pair&ltchar, const function&ltvoid()>>(c, bind(func, &m_turtle, arg1, arg2)));
+		}
 
-			string translate(const string& str, unsigned depth = 1) const {
-				string copy = str;
-				string output;
-				for (unsigned i = 0; i < depth; ++i) {
-					output = "";
-					for (char c : copy) {
-						auto rule = m_translationRules.find(c);
-						if (rule == m_translationRules.end()) {
-							output.append(string(1, c));
-						} else {
-							unsigned rulesCount = rule->second.size();
-							output.append(rule->second[rand() % rulesCount]);
-						}
-					}
-					copy = output;
-				}
-				return move(output);
-			}
-
-			void drawString(const string& str) const {
-				for (char c : str) {
-					auto rule = m_drawingRules.find(c);
-					if (rule != m_drawingRules.end()) {
-						rule->second();
+		string translate(const string& str, unsigned depth = 1) const {
+			string copy = str;
+			string output;
+			for (unsigned i = 0; i < depth; ++i) {
+				output = "";
+				for (char c : copy) {
+					auto rule = m_translationRules.find(c);
+					if (rule == m_translationRules.end()) {
+						output.append(string(1, c));
+					} else {
+						unsigned rulesCount = rule->second.size();
+						output.append(rule->second[rand() % rulesCount]);
 					}
 				}
+				copy = output;
 			}
+			return move(output);
+		}
+
+		void drawString(const string& str) const {
+			for (char c : str) {
+				auto rule = m_drawingRules.find(c);
+				if (rule != m_drawingRules.end()) {
+					rule->second();
+				}
+			}
+		}
 
 
-			Turtle m_turtle;
-		private:
-			map&ltchar, vector&ltstring>> m_translationRules;
-			map&ltchar, function&ltvoid()>> m_drawingRules;
-	};
-					</div>
-					</pre>
+		Turtle m_turtle;
+	private:
+		map&ltchar, vector&ltstring>> m_translationRules;
+		map&ltchar, function&ltvoid()>> m_drawingRules;
+};</pre><br><br><br>
 						
 					<h3>Koch snowflake</h3>
-					<pre>
-					<div class="boxed">
-					</div>
-					</pre>
+					Translation rules: F -> F+F--F+F
+					<br>Drawing rules: '-' -> left(60 deg), '+' -> right(60 deg), 'F' -> forward(5.0)
+					<br>Starting string: F--F--F
+					<br>Number of translations: 5
+					<pre class="code">
+LSystem lSystem1("task6C1.svg", 1440, 1440);
+lSystem1.addTranslationRule('F', {"F+F--F+F"});
+lSystem1.addDrawingRule&ltdouble>('F', &Turtle::forward, 5.0);
+lSystem1.addDrawingRule&ltdouble, bool>('-', &Turtle::left, 60, false);
+lSystem1.addDrawingRule&ltdouble, bool>('+', &Turtle::right, 60, false);
+
+lSystem1.m_turtle.drawing(false);
+lSystem1.m_turtle.forward(250);
+lSystem1.m_turtle.right(45);
+lSystem1.m_turtle.back(850);
+lSystem1.m_turtle.right(45);
+lSystem1.m_turtle.drawing(true);
+
+string str1 = lSystem1.translate("F--F--F", 5);
+lSystem1.drawString(str1);</pre>
+					<embed src="Results/Taskset6/task6C1.svg" width="700" height="710">
 						
 					<h3>Sierpinski triangle</h3>
-					<pre>
-					<div class="boxed">
-					</div>
-					</pre>
+					Translation rules: A -> B-A-B, B -> A+B+A
+					<br>Drawing rules: '-' -> left(60 deg), '+' -> right(60 deg), 'A'/'B' -> forward(5.0)
+					<br>Starting string: A
+					<br>Number of translations: 7
+					<pre class="code">
+LSystem lSystem2("task6C2.svg", 1440, 1440);
+lSystem2.addTranslationRule('A', {"B-A-B"});
+lSystem2.addTranslationRule('B', {"A+B+A"});
+lSystem2.addDrawingRule&ltdouble>('A', &Turtle::forward, 10.0);
+lSystem2.addDrawingRule&ltdouble>('B', &Turtle::forward, 10.0);
+lSystem2.addDrawingRule&ltdouble, bool>('-', &Turtle::left, 60, false);
+lSystem2.addDrawingRule&ltdouble, bool>('+', &Turtle::right, 60, false);
+
+lSystem2.m_turtle.drawing(false);
+lSystem2.m_turtle.forward(150);
+lSystem2.m_turtle.right(45);
+lSystem2.m_turtle.back(900);
+lSystem2.m_turtle.right(45);
+lSystem2.m_turtle.drawing(true);
+
+string str2 = lSystem2.translate("A", 7);
+lSystem2.drawString(str2);</pre>
+					<embed src="Results/Taskset6/task6C2.svg" width="700" height="710">
 						
 					<h3>Hilbert space-filling curve</h3>
-					<pre>
-					<div class="boxed">
-					</div>
-					</pre>
+					Translation rules: A -> -BF+AFA+FB-, B -> +AF-BFB-FA+
+					<br>Drawing rules: '-' -> left(90 deg), '+' -> right(90 deg), F -> forward(20.0)
+					<br>Starting string: A
+					<br>Number of translations: 6
+					<pre class="code">
+LSystem lSystem3("task6C3.svg", 1440, 1440);
+lSystem3.addTranslationRule('A', {"-BF+AFA+FB-"});
+lSystem3.addTranslationRule('B', {"+AF-BFB-FA+"});
+lSystem3.addDrawingRule&ltdouble>('F', &Turtle::forward, 20.0);
+lSystem3.addDrawingRule&ltdouble, bool>('-', &Turtle::left, 90, false);
+lSystem3.addDrawingRule&ltdouble, bool>('+', &Turtle::right, 90, false);
+
+lSystem3.m_turtle.drawing(false);
+lSystem3.m_turtle.right(45);
+lSystem3.m_turtle.back(900);
+lSystem3.m_turtle.right(45);
+lSystem3.m_turtle.drawing(true);
+
+string str2 = lSystem3.translate("A", 6);
+lSystem3.drawString(str2);</pre>
+					<embed src="Results/Taskset6/task6C3.svg" width="700" height="710">
 					
 					<h3>Custom curve</h3>
-					<pre>
-					<div class="boxed">
-					</div>
-					</pre>
+					Translation rules: A -> +BFB+, B -> -AFA-
+					<br>Drawing rules: '-' -> left(45 deg), '+' -> right(45 deg), F -> forward(20.0)
+					<br>Starting string: A
+					<br>Number of translations: 8
+					<pre class="code">
+LSystem lSystem4("task6C4.svg", 1440, 1440);
+lSystem4.addTranslationRule('A', {"+BFB+"});
+lSystem4.addTranslationRule('B', {"-AFA-"});
+lSystem4.addDrawingRule&ltdouble>('F', &Turtle::forward, 20.0);
+lSystem4.addDrawingRule&ltdouble, bool>('-', &Turtle::left, 45, false);
+lSystem4.addDrawingRule&ltdouble, bool>('+', &Turtle::right, 45, false);
+
+lSystem4.m_turtle.drawing(false);
+lSystem4.m_turtle.right(90);
+lSystem4.m_turtle.drawing(true);
+
+string str4 = lSystem4.translate("A", 8);
+lSystem4.drawString(str4);</pre>
+					<embed src="Results/Taskset6/task6C4.svg" width="700" height="710">
 						
 					<h3>Bush</h3>
-					<pre>
-					<div class="boxed">
-					</div>
-					</pre>
+					Translation rules: F -> FF+[+F-FF]-[-F+F+F]
+					<br>Drawing rules: '-' -> left(25 deg), '+' -> right(25 deg), F -> forward(15.0), [ -> push, ] -> pop
+					<br>Starting string: F
+					<br>Number of translations: 4
+					<pre class="code">
+LSystem lSystem5("task6C5.svg", 1440, 1440);
+lSystem5.addTranslationRule('F', {"FF+[+F-FF]-[-F+F+F]"});
+lSystem5.addDrawingRule&ltdouble>('F', &Turtle::forward, 15.0);
+lSystem5.addDrawingRule&ltdouble, bool>('-', &Turtle::left, 25, false);
+lSystem5.addDrawingRule&ltdouble, bool>('+', &Turtle::right, 25, false);
+lSystem5.addDrawingRule('[', &Turtle::pushPosition);
+lSystem5.addDrawingRule(']', &Turtle::popPosition);
+
+lSystem5.m_turtle.drawing(false);
+lSystem5.m_turtle.back(500);
+lSystem5.m_turtle.drawing(true);
+
+string x = lSystem5.translate("F", 4);
+lSystem5.drawString(x);</pre>
+					<embed src="Results/Taskset6/task6C5.svg" width="700" height="710">
 						
 					<h3>Custom grass</h3>
-					<pre>
-					<div class="boxed">
-					</div>
-					</pre>
+					Translation rules: F -> X[F][+F] or F[-F][XF] or H, X -> XX
+					<br>Translation rules: H -> +GGGGG[G]+[G]+[G]+[G]+[G]+[G]+[G]+[G]+[G]+[G]+[G]+[G]+ or <br>
+												-GGGGG[G]+[G]+[G]+[G]+[G]+[G]+[G]+[G]+[G]+[G]+[G]+[G]+
+					<br>Drawing rules: '-' -> left(30 deg), '+' -> right(30 deg), F/X -> forward(15.0), G -> forward(10.0), [ -> push, ] -> pop
+					<br>Starting string: F
+					<br>Number of translations: 
+					<pre class="code">
+LSystem lSystem6("task6C7.svg", 1440, 1440);
+lSystem6.addTranslationRule('F', {"X[F][+F]", "F[-F][XF]", "H"});
+lSystem6.addTranslationRule('X', {"XX"});
+lSystem6.addTranslationRule('H',
+		{"+GGGGG[G]+[G]+[G]+[G]+[G]+[G]+[G]+[G]+[G]+[G]+[G]+[G]+",
+		 "-GGGGG[G]+[G]+[G]+[G]+[G]+[G]+[G]+[G]+[G]+[G]+[G]+[G]+"});
+lSystem6.addDrawingRule&ltdouble>('F', &Turtle::forward, 15.0);
+lSystem6.addDrawingRule&ltdouble>('X', &Turtle::forward, 15.0);
+lSystem6.addDrawingRule&ltdouble>('G', &Turtle::forward, 10.0);
+lSystem6.addDrawingRule&ltdouble, bool>('-', &Turtle::left, 30, false);
+lSystem6.addDrawingRule&ltdouble, bool>('+', &Turtle::right, 30, false);
+lSystem6.addDrawingRule('[', &Turtle::pushPosition);
+lSystem6.addDrawingRule(']', &Turtle::popPosition);
+
+lSystem6.m_turtle.drawing(false);
+lSystem6.m_turtle.back(500);
+lSystem6.m_turtle.drawing(true);
+
+string x = lSystem6.translate("F", 7);
+lSystem6.drawString(x);</pre>
+					<embed src="Results/Taskset6/task6C7.svg" width="700" height="710">
 						
-					<h3>Custom... something, I like it for some reason</h3>
-					<pre>
-					<div class="boxed">
-					</div>
-					</pre>
+					<h3>Custom... something. I like it for some reason</h3>
+					Translation rules: F -> X[+F][-F], X -> XX
+					<br>Drawing rules: '-' -> left(90 deg), '+' -> right(90 deg), F/X -> forward(10.0), [ -> push, ] -> pop
+					<br>Starting string: F
+					<br>Number of translations: 7
+					<pre class="code">
+LSystem lSystem5("task6C6.svg", 1440, 1440);
+lSystem5.addTranslationRule('F', {"X[+F][-F]"});
+lSystem5.addTranslationRule('X', {"XX"});
+lSystem5.addDrawingRule&ltdouble>('F', &Turtle::forward, 10.0);
+lSystem5.addDrawingRule&ltdouble>('X', &Turtle::forward, 10.0);
+lSystem5.addDrawingRule&ltdouble, bool>('-', &Turtle::left, 90, false);
+lSystem5.addDrawingRule&ltdouble, bool>('+', &Turtle::right, 90, false);
+lSystem5.addDrawingRule('[', &Turtle::pushPosition);
+lSystem5.addDrawingRule(']', &Turtle::popPosition);
+
+lSystem5.m_turtle.drawing(false);
+lSystem5.m_turtle.back(500);
+lSystem5.m_turtle.drawing(true);
+
+string x = lSystem5.translate("F", 7);
+lSystem5.drawString(x);</pre>
+					<embed src="Results/Taskset6/task6C6.svg" width="700" height="710">
 
 					
 				</main>
@@ -311,7 +445,7 @@
 				
 				<nav id="sidebar">
 					<div class="widget">
-						<h3>Left heading</h3>
+						<h4>Sets:</h4>
 						<ul>
 						<li><a href="tasks1.html">Task set 1</a></li>
 						<li><a href="tasks2.html">Task set 2</a></li>
@@ -321,6 +455,10 @@
 						<li><a href="tasks6.html">Task set 6</a></li>
 						<li><a href="tasks7.html">Task set 7</a></li>
 						<li><a href="tasks8.html">Task set 8</a></li>
+						<li><a href="tasks9.html">Task set 9</a></li>
+						<li><a href="tasks11.html">Task set 11</a></li>
+						<li><a href="tasks12.html">Task set 12</a></li>
+						<li><a href="tasks13.html">Task set 13</a></li>
 						</ul>
 					</div>
 				</nav>
