@@ -1,0 +1,380 @@
+ <!DOCTYPE html>
+<!-- Template by html.am -->
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<title>IV122 portfolio</title>
+	<style type="text/css">
+		html, #page { padding:0; margin:0;}
+		body { margin:0; padding:0; width:100%; color:#000000; font:normal 12px/2.0em Sans-Serif;}
+		h1, h2, h3, h4, h5, h6 {color:darkblue;}
+		#page { background:#eee;}
+		#header, #footer, #top-nav, #content, #content #contentbar, #content #sidebar { margin:0; padding:0;}
+					
+		/* Logo */
+		#logo { padding:10px; width:auto; float:left;}
+		#logo h1 a, h1 a:hover { color:darkblue; text-decoration:none;}
+		#logo h1 span { color:#d3d3f9;}
+
+		/* Header */
+		#header { background:#eee; }
+		#header-inner { margin:0 auto; padding:10px; width:970px;background:#fff;}
+		
+		/* Feature */
+		.feature { background:#eee;padding:0;}
+		.feature-inner { margin:auto;padding:10px;width:970px;background:blue; }
+		.feature-inner h1 {color:#d3d3f9;font-size:32px;}
+		
+		/* Menu */
+		#top-nav { margin:0 auto; padding:0px 0 0; height:37px; float:right;}
+		#top-nav ul { list-style:none; padding:0; height:37px; float:left;}
+		#top-nav ul li { margin:0; padding:0 0 0 8px; float:left;}
+		#top-nav ul li a { display:block; margin:0; padding:8px 20px; color:blue; text-decoration:none;}
+		#top-nav ul li.active a, #top-nav ul li a:hover { color:#d3d3f9;}
+		
+		/* Content */
+		#content-inner { margin:0 auto; padding:10px; width:970px;background:#fff;}
+		#content #contentbar { margin:0; padding:0; float:right; width:830px;}
+		#content #contentbar .article { margin:0 0 24px; padding:0 20px 0 15px; }
+		#content #sidebar { padding:0; float:left; width:120px; background:#d3d3f9}
+		#content #sidebar .widget { margin:0 0 12px; padding:8px 8px 8px 13px;line-height:1.4em;}
+		#content #sidebar .widget h3 a { text-decoration:none;}
+		#content #sidebar .widget ul { margin:0; padding:0; list-style:none; color:#959595;}
+		#content #sidebar .widget ul li { margin:0;}
+		#content #sidebar .widget ul li { padding:4px 0; width:185px;}
+		#content #sidebar .widget ul li a { color:blue; text-decoration:none; margin-left:-16px; padding:4px 8px 4px 16px;}
+		#content #sidebar .widget ul li a:hover { color:#d3d3f9; font-weight:bold; text-decoration:none;}
+		
+		/* Footerblurb */
+		#footerblurb { background:#eee;color:blue;}
+		#footerblurb-inner { margin:0 auto; width:970px; padding:10px;background:#d3d3f9;border-bottom-right-radius:15px;border-bottom-left-radius:15px;}
+		#footerblurb .column { margin:0; text-align:justify; float:left;width:250px;padding:0 24px;}
+		
+		/* Footer */
+		#footer { background:#eee;}
+		#footer-inner { margin:auto; text-align:center; padding:12px; width:970px;}
+		#footer a {color:blue;text-decoration:none;}
+		
+		pre.code {
+			border: 2px solid gray;
+			padding-left: 10px;
+			color: #007700;
+			line-height: 1.5
+		}
+		
+		h3 {
+			font-size: 20px
+		}
+		
+		/* Clear both sides to assist with div alignment  */
+		.clr { clear:both; padding:0; margin:0; width:100%; font-size:0px; line-height:0px;}
+	</style>
+</head>
+<body>
+	<div id="page">
+		<header id="header">
+			<div id="header-inner">	
+				<div id="top-nav">
+					<ul>
+					<li><a href="index.html">INDEX</a></li>
+					</ul>
+				</div>
+				<div class="clr"></div>
+			</div>
+		</header>
+		<div class="feature">
+			<div class="feature-inner">
+			<h1>IV122 portfolio</h1>
+			<h2>Ján Horváth</h2>
+			<h2>433736</h2>
+			</div>
+		</div>
+	
+
+		<div id="content">
+			<div id="content-inner">
+			
+				<main id="contentbar">
+					<h3>Boy/girl proportion problem</h3>
+					Idea: What is the proportion of boys and girls in a society if every family keeps having children until the first boy.<br>	
+					The simulation takes as an argument just the number of families in a society.
+					<pre class = "code">
+void girlBoySimulation(unsigned families) {
+    unsigned girls = 0;
+    unsigned boys = 0;
+
+    for (unsigned i = 0; i < families; ++i) {
+        while(rand() % 2 == 1) ++girls;
+        ++boys;
+    }
+
+    cout << "For " << families << " families (boys), the number of girls is "
+    << girls << " ("  << 100*(double)girls/(boys+girls) << "%)" << endl;
+}
+
+Output:
+For 100 families (boys), the number of girls is 110 (52.381%)
+For 1000 families (boys), the number of girls is 1080 (51.9231%)
+For 10000 families (boys), the number of girls is 10121 (50.3007%)
+For 100000 families (boys), the number of girls is 100331 (50.0826%)
+For 1000000 families (boys), the number of girls is 1001194 (50.0298%)
+</pre>
+					<h3>Random sequences</h3>
+					I have used the following function to discover some regularities in the data:
+					<pre class="code">
+void randomBreakdown(unsigned fileNum) {
+    ifstream inputFile("random" + to_string(fileNum) + ".txt");
+    unsigned num = 0;
+    unsigned lastnum = 1;
+    vector<unsigned> histogram(6,0);
+    vector<vector<unsigned>> dHistogram(6,{0,0,0,0,0,0});
+    while (inputFile >> num) {
+        ++histogram[num-1];
+        ++dHistogram[lastnum-1][num-1];
+        lastnum = num;
+    }
+    --histogram[0];
+
+    cout << "Histogram of individual values: " << endl;
+    for (auto n : histogram) cout << n << " ";
+    cout << endl << endl;
+
+    cout << "Histogram of 2 consecutive numbers: "  << endl << "    ";
+    for (int k = 1; k <= 6; ++k) {cout << setw(5) << k;}
+    cout << "  (second)" << endl;
+    unsigned i = 1;
+    for (const auto& vec : dHistogram) {
+        cout << "   " << i++;
+        for (auto n : vec) {
+            cout << setw(5) << n;
+        }
+        cout << endl;
+    }
+    cout << "(first)" << endl;
+}</pre>
+					The function outputs the number of each digit and also every subsequent pair of digits. For example in the first case:
+					<pre class="code">
+Histogram of individual values: 
+832 834 833 834 833 833 
+
+Histogram of 2 consecutive numbers: 
+        1    2    3    4    5    6  (second)
+   1   23  152  156  168  166  169
+   2  149   21  173  186  145  160
+   3  164  164   17  136  171  181
+   4  178  157  156   15  175  152
+   5  160  175  173  165   17  143
+   6  159  165  158  164  159   28
+(first)</pre>
+				Sequence 1: Permutations of 6<br>
+				Sequence 2: Whenever a 2 is generated, replace it with 5 with 50% probability<br>
+				Sequence 3:<br>
+				Sequence 4: Odd and even numbers alternate<br>
+				Sequence 5: 2 is most likely followed by 5, 5 by 3, 3 by 4, 4 by 1, 1 by 6, 6 by 2<br>
+				Sequence 6: <br>
+				Sequence 7: <br>
+				<br>
+				<h3>Central limit theorem</h3>
+				
+				<h4>Dice implementation</h4>
+				The function <i>throwDie</i> simulates the dice A(index=0) and dice B(index=1). For higher index number the function randomly chooses one of them.<br>
+				(I do realize, that the function does not look very sophisticated but one can easily see what are the chances of getting individual outcomes. That is why I kept it this way.)<br>
+				The function <i>nThrowAverage</i> simulates n throws of a dice with the index <i>diceIdx</i>.
+				<pre class = "code">
+unsigned throwDice(unsigned diceIdx) {
+    unsigned n = (rand() % 21) + 1;
+    if (diceIdx > 1) {diceIdx = rand() % 2;}
+    if (diceIdx == 0) {
+        if (n == 1) return 1;
+        if (n <= 3) return 2;
+        if (n <= 6) return 3;
+        if (n <= 10) return 4;
+        if (n <= 15) return 5;
+        if (n <= 21) return 6;
+    } else {
+        if (n <= 6) return 1;
+        if (n <= 11) return 2;
+        if (n <= 15) return 3;
+        if (n <= 18) return 4;
+        if (n <= 20) return 5;
+        if (n <= 21) return 6;
+    }
+}
+
+double nThrowAverage(unsigned n, unsigned diceIdx) {
+    double sum = 0.0;
+    for (unsigned i = 0; i < n; ++i) {
+        sum += throwDice(diceIdx);
+    }
+    return sum/n;
+};</pre>
+
+The function <i>CLT_Test</i> uses the two function above to simulate the 3 test given by the assignment.
+<pre class="code">
+vector&ltdouble> CLT_Test(unsigned k, unsigned n, unsigned testNumber) {
+    vector&ltdouble> output;
+    output.reserve(k);
+    for (unsigned i = 0; i < k; ++i) {
+        double average = 0.0;
+        if (testNumber == 1) {
+            average = nThrowAverage(n, 0);
+        }
+        if (testNumber == 2) {
+            average = nThrowAverage(n, 2);
+        }
+        if (testNumber == 3) {
+            average = nThrowAverage(n, rand() % 2);
+        }
+        output.push_back(average);
+    }
+    return move(output);
+}</pre>
+
+Thw following function creates a graph of a distribution achieved by the tests above.
+<pre class="code">
+void plot_CLT_Test(svg::SVGFile &file, vector&ltdouble> &CLT_Test_Output, double groupSize) {
+    double min = 0.0;
+    double max = 7.0;
+
+    sort(CLT_Test_Output.begin(), CLT_Test_Output.end());
+    double currentGroupThreshold = min + groupSize;
+    unsigned currentGroupSize = 0;
+    for (unsigned i = 0; i <= CLT_Test_Output.size(); ++i) {
+        if ((i != CLT_Test_Output.size()) && (CLT_Test_Output[i] < currentGroupThreshold)) {
+            ++currentGroupSize;
+        } else {
+            svg::Point A((currentGroupThreshold - groupSize/2) * file.m_width/(max - min), file.m_height * 0.9);
+            svg::Point B(A.X, file.m_height * 0.9 - currentGroupSize*0.25);
+            file.addLine(A, B);
+
+            currentGroupSize = 0;
+            currentGroupThreshold += groupSize;
+            if (i == CLT_Test_Output.size()) break;
+            --i;
+        }
+    }
+    file.addLabels();
+}
+				</pre>
+				<h4>Test 1:</h4>
+				<embed src="Results/Taskset9/plot1.svg" width="800" height="820"><br>
+				<h4>Test 2:</h4>
+				<embed src="Results/Taskset9/plot2.svg" width="800" height="820"><br>
+				<h4>Test 3:</h4>
+				<embed src="Results/Taskset9/plot3.svg" width="800" height="820"><br>
+				<h4>Conclusion</h4>
+				Test 1 and 2 approach normal distribution. Test 3 does not, since we do not sample from the same distribution every time.<br>
+				The higher the value <i>k</i>, the more iterations are done and the resulting graph resembles normal distribution more. This is in accordance with the central limit theorem (which states the same thing about k when it converges to infinity).
+				The higher the value <i>n</i> the narrower the distribution (lower stadard deviation).<br>
+				<h4>Test 2 (with <i>k</i> 4 times higher):</h4>
+				<embed src="Results/Taskset9/plot_largeK.svg" width="800" height="820"><br>
+				<h4>Test 2 (with <i>n</i> 10 times higher):</h4>
+				<embed src="Results/Taskset9/plot_largeN.svg" width="800" height="820"><br>
+				
+				
+				<h3>Bayes rule</h3>
+				Idea: I have <i>N</i> dice and one of them is fake (has all sixes). Given the fact, that randomly chosen dice has landed <i>K</i> times on the number 6, what is the probability, that the dice is fake.
+				My guesses:<br>
+				N = 10, K = 5 (>99%)<br>
+				N = 100, K = 3 (>70%)<br>
+				N = 1000, K = 5 (>87%)<br>
+				N = 216, K = 3 (~50%)<br>
+				<br>
+				The simulation implementation:<br>
+				<i>throwDice</i> - returns 6 if fake, otherwise return number from 1 to 6<br>
+				<i>fakeDiceSimulation</i> - In each iteration:<br>
+					   1. Randomly set <i>isFake</i> to true or false based on <i>N_dice</i> value.<br>
+					   2. Throw the dice <i>K_throw</i> times.<br>
+					   3. If all I got was sixes, increase current counter for fake or real dice.<br>  
+				<pre class="code">
+unsigned throwDice(bool fake) {
+    if (!fake) return (rand() % 6) + 1;
+    return 6;
+}
+
+void fakeDiceSimulation(unsigned N_dice, unsigned K_throws, unsigned iterations) {
+    cout << "Probability of having choosen a fake dice given the fact that I got " << K_throws << " times number 6 is"
+         << " (according to Bayes rule) " << 1.0/(1+(N_dice-1)/pow(6.0, K_throws)) * 100 << "%." << endl << endl;
+
+    unsigned fakesCount = 0;
+    unsigned realsCount = 0;
+
+    for (unsigned i = 0; i < iterations; ++i) {
+        bool isFake = (rand() % N_dice == 0);
+        bool allSixes = false;
+        for (unsigned j = 1; j <= K_throws; ++j) {
+            if (throwDice(isFake) != 6) {
+                break;
+            }
+            if (j == K_throws) {
+                allSixes = true;
+            }
+        }
+
+        if (allSixes) {
+            isFake ? ++fakesCount : ++realsCount;
+        }
+        allSixes = false;
+    }
+
+    cout << "Experimental result for " << K_throws << " throws and " << N_dice << " dice after " << iterations
+         << " iterations is " << (double)fakesCount/(fakesCount+realsCount) * 100 << "%." << endl;
+}</pre>
+
+N = 10, K = 5:
+				<pre class="code">
+Probability of having choosen a fake dice given the fact that I got 5 times number 6 
+is (according to Bayes rule) 99.8844%.
+Experimental result for 5 throws and 10 dice after 2000000 iterations is 99.8842%.</pre>
+
+N = 100, K = 3:
+				<pre class="code">
+Probability of having choosen a fake dice given the fact that I got 3 times number 6 
+is (according to Bayes rule) 68.5714%.
+Experimental result for 3 throws and 100 dice after 2000000 iterations is 68.7586%.</pre>
+
+N = 1000, K = 5:
+				<pre class="code">
+Probability of having choosen a fake dice given the fact that I got 5 times number 6 
+is (according to Bayes rule) 88.6154%.
+Experimental result for 5 throws and 1000 dice after 2000000 iterations is 89.1215%.</pre>
+
+N = 216, K = 3:
+				<pre class="code">
+Probability of having choosen a fake dice given the fact that I got 3 times number 6 
+is (according to Bayes rule) 50.116%.
+Experimental result for 3 throws and 216 dice after 2000000 iterations is 50.2194%.</pre>
+				
+				
+				</main>		
+				
+				<nav id="sidebar">
+					<div class="widget">
+						<h4>Sets:</h4>
+						<ul>
+						<li><a href="tasks1.html">Task set 1</a></li>
+						<li><a href="tasks2.html">Task set 2</a></li>
+						<li><a href="tasks3.html">Task set 3</a></li>
+						<li><a href="tasks4.html">Task set 4</a></li>
+						<li><a href="tasks5.html">Task set 5</a></li>
+						<li><a href="tasks6.html">Task set 6</a></li>
+						<li><a href="tasks7.html">Task set 7</a></li>
+						<li><a href="tasks8.html">Task set 8</a></li>
+						<li><a href="tasks9.html">Task set 9</a></li>
+						<li><a href="tasks11.html">Task set 11</a></li>
+						<li><a href="tasks12.html">Task set 12</a></li>
+						<li><a href="tasks13.html">Task set 13</a></li>
+						</ul>
+					</div>
+				</nav>
+				
+				<div class="clr"></div>
+			</div>
+		</div>
+	
+		<div id="footerblurb">
+			<div id="footerblurb-inner"></div>
+		</div>
+	</div>
+</body>
+</html>
