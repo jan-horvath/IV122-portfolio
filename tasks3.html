@@ -213,9 +213,9 @@ void circularLattice(SVGFile& file, double radius, double spacing) {
 					
 					The image D) can be easily done by both approaches.
 					<pre class="code">
-	for (unsigned i = 0; i < 30; ++i) {
-		drawPolygon(D, 3, 10*i+4);
-	}</pre>
+for (unsigned i = 0; i < 30; ++i) {
+	drawPolygon(D, 3, 10*i+4);
+}</pre>
 					<embed src="Results/Taskset3/task3B-D.svg" width="500" height="520">
 					<br>
 					
@@ -333,9 +333,9 @@ void sierpinski(Turtle &t, double radius, unsigned depth) {
 	t.drawing(true);
 }</pre>
 					<embed src="Results/Taskset3/task3C-C.svg" width="500" height="510">
+					<br><br>
 		
-		
-					An n-regular polygon is divided into n+1 n-regular smaller polygons. One is in the middle and the others are adjacent to it by an common edge. This process is repeated <i>depth</i> times. However, I had trouble with rotations for even and odd <i>polyDegree</i>, which you can see in the pictures.
+					An n-regular polygon is divided into n+1 n-regular smaller polygons. One is in the middle and the others are adjacent to it by an common edge. This process is repeated <i>depth</i> times. However, I had some trouble with correct rotations for even and odd <i>polyDegree</i>, which you can see in the pictures. Only the odd ones came out as wanted.
 					<pre class="code">
 void polySnowflake(Turtle &t, unsigned polyDegree, double radius, unsigned depth) {
 	if (depth == 0) {
@@ -367,7 +367,7 @@ void polySnowflake(Turtle &t, unsigned polyDegree, double radius, unsigned depth
 					
 					<h3>Custom fractals</h3>
 					
-					This is what the product of the function <i>polySnowflake</i> for <i>polydegree</i> should have looked like.<br>
+					This is what the product of the function <i>polySnowflake</i> for <i>polydegree</i>=6 should have looked like.<br>
 					Here I have added the function <i>drawHexaladder</i> which creates ladder between two non-adjacent, non-opposite sides of a hexagon.
 					<pre class="code">
 void drawLadder(SVGFile& file, Point A, Point B, Point C, Point D, double frequency) {
@@ -406,7 +406,7 @@ void customFractal1(SVGFile& file, Point center, double radius, unsigned depth) 
 		customFractal1(file, newCenter, radius/3, depth-1);
 	}
 }</pre>
-					<embed src="Results/Taskset3/task3D-1.svg" width="600" height="610">
+					<embed src="Results/Taskset3/task3D-1.svg" width="800" height="820"><br><br>
 					
 					This is a line segment transformed using fractal which looks like a right-turning hook.
 					<pre class="code">
@@ -436,9 +436,9 @@ void customFractal2(Turtle &t, double length, unsigned depth) {
 	t.left(45);
 	customFractal2(t, 1.5*quarter - quarter/sqrt(2), depth-1);
 }</pre>
-					<embed src="Results/Taskset3/task3D-2.svg" width="600" height="610">
+					<embed src="Results/Taskset3/task3D-2.svg" width="800" height="820"><br><br>
 					
-					One application of this code transforms a line into "test with antenna". I have applied this function four times to four to four lines forming a square. The result is a cloud like fractal.<br>
+					One application of this code transforms a line into "tent with antenna". I have applied this function four times to four to four lines forming a square. The result is a cloud like fractal.<br>
 					In the first picture, you can see a single application on one vertical line. In the second picture, you can see four lines of a circle transformed by one application. The last picture contains the resule of 4 applications on a square.
 					<pre class="code">
 void customFractal3(Turtle &t, double length, unsigned depth) {
@@ -461,9 +461,9 @@ void customFractal3(Turtle &t, double length, unsigned depth) {
 	t.left(45);
 	customFractal3(t, quarter, depth-1);
 }</pre>
-					<embed src="Results/Taskset3/task3D-3comp.svg" width="350" height="360">
-					<embed src="Results/Taskset3/task3D-3comp2.svg" width="350" height="360">
-					<embed src="Results/Taskset3/task3D-3.svg" width="750" height="760">
+					<embed src="Results/Taskset3/task3D-3comp.svg" width="400" height="420">
+					<embed src="Results/Taskset3/task3D-3comp2.svg" width="400" height="420">
+					<embed src="Results/Taskset3/task3D-3.svg" width="800" height="820">
 					
 				</main>
 				

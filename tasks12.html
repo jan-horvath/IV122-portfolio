@@ -1,0 +1,516 @@
+ <!DOCTYPE html>
+<!-- Template by html.am -->
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<title>IV122 portfolio</title>
+	<style type="text/css">
+		html, #page { padding:0; margin:0;}
+		body { margin:0; padding:0; width:100%; color:#000000; font:normal 12px/2.0em Sans-Serif;}
+		h1, h2, h3, h4, h5, h6 {color:darkblue;}
+		#page { background:#eee;}
+		#header, #footer, #top-nav, #content, #content #contentbar, #content #sidebar { margin:0; padding:0;}
+					
+		/* Logo */
+		#logo { padding:10px; width:auto; float:left;}
+		#logo h1 a, h1 a:hover { color:darkblue; text-decoration:none;}
+		#logo h1 span { color:#d3d3f9;}
+
+		/* Header */
+		#header { background:#eee; }
+		#header-inner { margin:0 auto; padding:10px; width:970px;background:#fff;}
+		
+		/* Feature */
+		.feature { background:#eee;padding:0;}
+		.feature-inner { margin:auto;padding:10px;width:970px;background:blue; }
+		.feature-inner h1 {color:#d3d3f9;font-size:32px;}
+		
+		/* Menu */
+		#top-nav { margin:0 auto; padding:0px 0 0; height:37px; float:right;}
+		#top-nav ul { list-style:none; padding:0; height:37px; float:left;}
+		#top-nav ul li { margin:0; padding:0 0 0 8px; float:left;}
+		#top-nav ul li a { display:block; margin:0; padding:8px 20px; color:blue; text-decoration:none;}
+		#top-nav ul li.active a, #top-nav ul li a:hover { color:#d3d3f9;}
+		
+		/* Content */
+		#content-inner { margin:0 auto; padding:10px; width:970px;background:#fff;}
+		#content #contentbar { margin:0; padding:0; float:right; width:830px;}
+		#content #contentbar .article { margin:0 0 24px; padding:0 20px 0 15px; }
+		#content #sidebar { padding:0; float:left; width:120px; background:#d3d3f9}
+		#content #sidebar .widget { margin:0 0 12px; padding:8px 8px 8px 13px;line-height:1.4em;}
+		#content #sidebar .widget h3 a { text-decoration:none;}
+		#content #sidebar .widget ul { margin:0; padding:0; list-style:none; color:#959595;}
+		#content #sidebar .widget ul li { margin:0;}
+		#content #sidebar .widget ul li { padding:4px 0; width:185px;}
+		#content #sidebar .widget ul li a { color:blue; text-decoration:none; margin-left:-16px; padding:4px 8px 4px 16px;}
+		#content #sidebar .widget ul li a:hover { color:#d3d3f9; font-weight:bold; text-decoration:none;}
+		
+		/* Footerblurb */
+		#footerblurb { background:#eee;color:blue;}
+		#footerblurb-inner { margin:0 auto; width:970px; padding:10px;background:#d3d3f9;border-bottom-right-radius:15px;border-bottom-left-radius:15px;}
+		#footerblurb .column { margin:0; text-align:justify; float:left;width:250px;padding:0 24px;}
+		
+		/* Footer */
+		#footer { background:#eee;}
+		#footer-inner { margin:auto; text-align:center; padding:12px; width:970px;}
+		#footer a {color:blue;text-decoration:none;}
+		
+		pre.code {
+			border: 2px solid gray;
+			padding-left: 10px;
+			color: #007700;
+			line-height: 1.5
+		}
+		
+		h3 {
+			font-size: 20px
+		}
+		
+		embed {
+			border: 3px solid black;
+		}
+		
+		/* Clear both sides to assist with div alignment  */
+		.clr { clear:both; padding:0; margin:0; width:100%; font-size:0px; line-height:0px;}
+	</style>
+</head>
+<body>
+	<div id="page">
+		<header id="header">
+			<div id="header-inner">	
+				<div id="top-nav">
+					<ul>
+					<li><a href="index.html">INDEX</a></li>
+					</ul>
+				</div>
+				<div class="clr"></div>
+			</div>
+		</header>
+		<div class="feature">
+			<div class="feature-inner">
+			<h1>IV122 portfolio</h1>
+			<h2>Ján Horváth</h2>
+			<h2>433736</h2>
+			</div>
+		</div>
+	
+
+		<div id="content">
+			<div id="content-inner">
+			
+				<main id="contentbar">
+					<h3>Graph implementation</h3>
+					A single node is represented by a <i>Cell</i> class:
+					<pre class = "code">
+struct Cell {
+	Cell(Coords coords) : m_out(), m_idx(coords), m_prev(), m_spl(0), m_processed(false) {}
+
+	vector&ltpair&ltCell*, int>> m_out; //outgoing edges (pair of int and node pointer)
+	const Coords m_idx; //coordinates of a labyrinth cell, this is used for node identification
+
+	vector&ltCell*> m_prev;//previous cell from which this cell was reached with path of length m_spl
+	unsigned m_spl;//shortest path length
+	bool m_processed;
+	bool isWall;
+};</pre>
+					
+					The graph class contains 3D array of nodes (cells) and a function <i>getCell</i> which must be defined by each specialized graph type. The <i>getCell</i> function takes coordinates and returns a cell with those coordinates. The <i>Graph</i> class is only an interface (is virtual).
+					
+					<pre class="code">
+class Graph {
+	virtual Cell& getCell(const Coords& c) = 0;
+	vector&ltvector&ltvector&ltCell>>> m_cells;
+};
+</pre>
+					Besides that, the <i>Graph</i> class contains modified Dijkstra implementation, which also stores all shortest paths (see the comments in the code for more details):
+					<pre class="code">					
+vector&ltvector&ltCell*>> Dijkstra(const Coords& p_from, const Coords& p_to) {
+	vector&ltCell*> pq; //priority queue
+	unsigned umaxhalf = numeric_limits&ltunsigned>::max()/2; //"infinity"
+
+	for (auto& row : m_cells) { //add all cells to priority queue and set their shortest paths to infinity
+		for (auto& cellBlock : row) {
+			for (auto& cell: cellBlock) {
+				cell.m_spl = umaxhalf;
+				cell.m_prev.clear();
+				cell.m_processed = false;
+				pq.push_back(&cell);
+			}
+		}
+	}
+
+	Cell* current = &getCell(p_from);//change SPL to 0 and resort the heap
+	current->m_spl = 0;
+	make_heap(pq.begin(), pq.end(), &hasGreaterSpl);
+	pop_heap(pq.begin(), pq.end(), &hasGreaterSpl);
+	pq.pop_back();
+
+	while (current->m_idx != p_to) { //while target node not found
+		for (const auto &edge : current->m_out) { //check if each outgoing edge can be used for relaxation
+		
+			//if another shortest path of the same length was found
+			if (edge.first->m_spl == current->m_spl + edge.second) { 
+				edge.first->m_prev.push_back(current); //add it to a list
+			}
+
+			//decrease-key - new shortest path to current node was found
+			if (edge.first->m_spl > current->m_spl + edge.second) {
+				edge.first->m_spl = current->m_spl + edge.second;
+				edge.first->m_prev.clear();
+				edge.first->m_prev.push_back(current);
+				make_heap(pq.begin(), pq.end(), &hasGreaterSpl);
+			}
+		}
+		
+		//take the next in the queue
+		current = pq.front();
+		pop_heap(pq.begin(), pq.end(), &hasGreaterSpl);
+		pq.pop_back();
+
+		auto b1 = current->m_idx != p_to;
+		auto b2 = current->m_spl == umaxhalf;
+	}
+	cout << "Shortest path length: " << getCell(p_to).m_spl << endl;
+	vector&ltCell*> SP;
+	vector&ltvector&ltCell*>> output;
+	//prints the shortest paths by backtracking from target node to start node
+	printShortestPaths(&getCell(p_to), SP, output);
+	return move(output);
+}</pre>					
+					
+					The <i>Graph</i> class also contains two functions for labyrinth drawing (with shortest path) and text output of shortest path. I have not included them, since I do not find them particularly interesting.
+					
+					<h3>Numbered labyrinth</h3>
+					The <i>Numbered</i> graph needs 2D array of integers to create nodes and edges. The last coordinate is always 0. since only 2D array is needed in this case.
+					<pre class = "code">
+explicit NumberedGraph(const vector&ltvector&ltunsigned>>& data) {
+	m_cells.resize(data.size());
+	for (unsigned i = 0; i < data.size(); ++i) {
+		m_cells[i].resize(data[i].size());
+		for (unsigned j = 0; j < m_cells[i].size(); ++j) {
+			m_cells[i][j].emplace_back(Cell({j,i,0}));
+		}
+	}
+
+	for (int row = 0; row < m_cells.size(); ++row) {
+		for (int col = 0; col < m_cells[row].size(); ++col) {
+			int V = data[row][col];
+			m_cells[row][col][0].m_value = V;
+			if (V == 0) continue;
+			
+			//Add edges if possible
+			if (row - V >= 0) {
+				m_cells[row][col][0].m_out.emplace_back(make_pair(&m_cells[row-V][col][0],1));
+			}
+
+			if (row + V < m_cells.size()) {
+				m_cells[row][col][0].m_out.emplace_back(make_pair(&m_cells[row+V][col][0], 1));
+			}
+
+			if (col - V >= 0) {
+				m_cells[row][col][0].m_out.emplace_back(make_pair(&m_cells[row][col-V][0], 1));
+			}
+
+			if (col + V < m_cells[row].size()) {
+				m_cells[row][col][0].m_out.emplace_back(make_pair(&m_cells[row][col+V][0], 1));
+			}
+		}
+	}
+}</pre>
+					
+				<h4>Labyrinth solutions from the assignment</h4>
+				<pre class="code">
+auto output = getNumGraphFromFile("ciselne-bludiste1.txt");
+NumberedGraph ng1(output);
+ng1.Dijkstra({0,0,0}, {3,3,0}); //Start = [0,0]; Target = [3,3]
+
+Output:
+Shortest path length: 4
+[0,0,0] -> [2,0,0]
+[2,0,0] -> [2,2,0]
+[2,2,0] -> [2,3,0]
+[2,3,0] -> [3,3,0]</pre>
+				
+				<pre class="code">
+auto output = getNumGraphFromFile("ciselne-bludiste2.txt");
+NumberedGraph ng1(output);
+ng1.Dijkstra({0,0,0}, {4,4,0}); //Start = [0,0]; Target = [4,4]
+
+Output:
+Shortest path length: 6
+[0,0,0] -> [0,3,0]
+[0,3,0] -> [3,3,0]
+[3,3,0] -> [1,3,0]
+[1,3,0] -> [1,4,0]
+[1,4,0] -> [2,4,0]
+[2,4,0] -> [4,4,0]</pre>
+				
+				<pre class="code">
+auto output = getNumGraphFromFile("ciselne-bludiste3.txt");
+NumberedGraph ng1(output);
+ng1.Dijkstra({0,0,0}, {4,4,0}); //Start = [0,0]; Target = [4,4]
+
+Output: (2 paths)
+Shortest path length: 6
+[0,0,0] -> [0,1,0]
+[0,1,0] -> [1,1,0]
+[1,1,0] -> [1,4,0]
+[1,4,0] -> [0,4,0]
+[0,4,0] -> [3,4,0]
+[3,4,0] -> [4,4,0]
+
+[0,0,0] -> [0,1,0]
+[0,1,0] -> [0,2,0]
+[0,2,0] -> [0,3,0]
+[0,3,0] -> [0,4,0]
+[0,4,0] -> [3,4,0]
+[3,4,0] -> [4,4,0]</pre>
+				
+				<pre class="code">
+auto output = getNumGraphFromFile("ciselne-bludiste4.txt");
+NumberedGraph ng1(output);
+ng1.Dijkstra({0,0,0}, {9,9,0}); //Start = [0,0]; Target = [9,9]
+
+Output: (2 paths)
+Shortest path length: 9
+[0,0,0] -> [9,0,0]
+[9,0,0] -> [1,0,0]
+[1,0,0] -> [8,0,0]
+[8,0,0] -> [8,8,0]
+[8,8,0] -> [6,8,0]
+[6,8,0] -> [6,9,0]
+[6,9,0] -> [4,9,0]
+[4,9,0] -> [7,9,0]
+[7,9,0] -> [9,9,0]
+
+[0,0,0] -> [0,9,0]
+[0,9,0] -> [2,9,0]
+[2,9,0] -> [2,3,0]
+[2,3,0] -> [6,3,0]
+[6,3,0] -> [6,8,0]
+[6,8,0] -> [6,9,0]
+[6,9,0] -> [4,9,0]
+[4,9,0] -> [7,9,0]
+[7,9,0] -> [9,9,0]</pre>
+				
+				Extra custom numbered graph with many shortest paths:
+				<pre class="code">
+2 0 2 0 0 0 0 0 0 0
+0 0 0 0 0 0 0 0 0 0
+2 0 4 0 0 0 4 0 0 0
+0 0 0 0 0 0 0 0 0 0
+0 0 0 0 0 0 0 0 0 0
+0 0 0 0 0 0 0 0 0 0
+0 0 4 0 0 0 3 0 0 3
+0 0 0 0 0 0 0 0 0 0
+0 0 0 0 0 0 0 0 0 0
+0 0 0 0 0 0 3 0 0 0</pre>
+				<pre class="code">
+auto output = getNumGraphFromFile("ciselne-bludisteT.txt");
+NumberedGraph ng1(output);
+ng1.Dijkstra({0,0,0}, {9,9,0}); //Start = [0,0]; Target = [9,9]
+
+Output: (2 paths)
+Shortest path length: 6
+[0,0,0] -> [2,0,0]
+[2,0,0] -> [2,2,0]
+[2,2,0] -> [6,2,0]
+[6,2,0] -> [6,6,0]
+[6,6,0] -> [9,6,0]
+[9,6,0] -> [9,9,0]
+
+[0,0,0] -> [0,2,0]
+[0,2,0] -> [2,2,0]
+[2,2,0] -> [6,2,0]
+[6,2,0] -> [6,6,0]
+[6,6,0] -> [9,6,0]
+[9,6,0] -> [9,9,0]
+
+[0,0,0] -> [2,0,0]
+[2,0,0] -> [2,2,0]
+[2,2,0] -> [2,6,0]
+[2,6,0] -> [6,6,0]
+[6,6,0] -> [9,6,0]
+[9,6,0] -> [9,9,0]
+
+[0,0,0] -> [0,2,0]
+[0,2,0] -> [2,2,0]
+[2,2,0] -> [2,6,0]
+[2,6,0] -> [6,6,0]
+[6,6,0] -> [9,6,0]
+[9,6,0] -> [9,9,0]
+
+[0,0,0] -> [2,0,0]
+[2,0,0] -> [2,2,0]
+[2,2,0] -> [6,2,0]
+[6,2,0] -> [6,6,0]
+[6,6,0] -> [6,9,0]
+[6,9,0] -> [9,9,0]
+
+[0,0,0] -> [0,2,0]
+[0,2,0] -> [2,2,0]
+[2,2,0] -> [6,2,0]
+[6,2,0] -> [6,6,0]
+[6,6,0] -> [6,9,0]
+[6,9,0] -> [9,9,0]
+
+[0,0,0] -> [2,0,0]
+[2,0,0] -> [2,2,0]
+[2,2,0] -> [2,6,0]
+[2,6,0] -> [6,6,0]
+[6,6,0] -> [6,9,0]
+[6,9,0] -> [9,9,0]
+
+[0,0,0] -> [0,2,0]
+[0,2,0] -> [2,2,0]
+[2,2,0] -> [2,6,0]
+[2,6,0] -> [6,6,0]
+[6,6,0] -> [6,9,0]
+[6,9,0] -> [9,9,0]</pre>
+				
+				
+				<h3>Robot labyrinth</h3>
+				Robot can move forward or rotate 90 degrees. Each of those actions needs one step.<br>
+				Each labyrinth cell is divided into 4 graph nodes (using the 3rd coordinate).<br>
+				The input format is a list of strings, for example:
+				<pre class="code">
+{
+"     ",
+" ###  #",
+"  ##   #",
+"#  #   ",
+"##   "
+}</pre>
+				<pre class="code">
+explicit RobotGraph(const vector&ltstring>& data) {
+	m_cells.resize(data.size());
+	for (unsigned i = 0; i < data.size(); ++i) {
+		m_cells[i].resize(data[i].length());
+		for (unsigned j = 0; j < m_cells[i].size(); ++j) {
+			m_cells[i][j].emplace_back(Cell({j,i,0}));
+			m_cells[i][j].emplace_back(Cell({j,i,1}));
+			m_cells[i][j].emplace_back(Cell({j,i,2}));
+			m_cells[i][j].emplace_back(Cell({j,i,3}));
+		}
+	}
+
+	for (int row = 0; row < m_cells.size(); ++row) {
+		for (int col = 0; col < m_cells[row].size(); ++col) {
+			for (int rotation = 0; rotation < 4; ++rotation) {
+					auto left = &m_cells[row][col][mod(rotation - 1, 4)];
+					auto right = &m_cells[row][col][mod(rotation + 1, 4)];
+					m_cells[row][col][rotation].m_out.emplace_back(make_pair(left, 1));
+					m_cells[row][col][rotation].m_out.emplace_back(make_pair(right, 1));
+			}
+			vector&ltCell> &current = m_cells[row][col];
+			if (data[row][col] == ' ') {
+				m_cells[row][col][0].isWall = false;
+				m_cells[row][col][1].isWall = false;
+				m_cells[row][col][2].isWall = false;
+				m_cells[row][col][3].isWall = false;
+
+				if (row != 0 && (data[row-1].size() >= col+1)) { //from above
+					m_cells[row - 1][col][1].m_out.emplace_back(make_pair(&ampcurrent[1], 1));
+				}
+
+				if (row != m_cells.size() - 1 && (data[row+1].size() >= col+1)) { //from below
+					m_cells[row + 1][col][3].m_out.emplace_back(make_pair(&ampcurrent[3], 1));
+				}
+
+				if (col != 0) { //from left
+					m_cells[row][col - 1][0].m_out.emplace_back(make_pair(&ampcurrent[0], 1));
+				}
+
+				if (col != m_cells[row].size() - 1) { //from right
+					m_cells[row][col + 1][2].m_out.emplace_back(make_pair(&ampcurrent[2], 1));
+				}
+			} else {
+				m_cells[row][col][0].isWall = true;
+				m_cells[row][col][1].isWall = true;
+				m_cells[row][col][2].isWall = true;
+				m_cells[row][col][3].isWall = true;
+			}
+		}
+	}
+}</pre>
+				Example of a robot graph:
+				<pre class="code">
+SVGFile file("robot_graph1.svg", 1000, 1000);
+RobotGraph rg({
+	//" #  ",
+	//"   "
+	"     ",
+	" ###  #",
+	"  ##   #",
+	"#  #   ",
+	"##   "
+});
+auto shortestPaths = rg.Dijkstra({0,0,1}, {3,4,1});
+//auto shortestPaths = rg.Dijkstra({0,0,1}, {3,0,1)});
+rg.drawLabyrinth(file, shortestPaths);
+
+Output:
+Shortest path length: 13
+[0,0,1] -> [0,1,1]
+[0,1,1] -> [0,2,1]
+[0,2,1] -> [0,2,0]
+[0,2,0] -> [1,2,0]
+[1,2,0] -> [1,2,1]
+[1,2,1] -> [1,3,1]
+[1,3,1] -> [1,3,0]
+[1,3,0] -> [2,3,0]
+[2,3,0] -> [2,3,1]
+[2,3,1] -> [2,4,1]
+[2,4,1] -> [2,4,0]
+[2,4,0] -> [3,4,0]
+[3,4,0] -> [3,4,1]
+
+[0,0,1] -> [0,0,0]
+[0,0,0] -> [1,0,0]
+[1,0,0] -> [2,0,0]
+[2,0,0] -> [3,0,0]
+[3,0,0] -> [4,0,0]
+[4,0,0] -> [4,0,1]
+[4,0,1] -> [4,1,1]
+[4,1,1] -> [4,2,1]
+[4,2,1] -> [4,3,1]
+[4,3,1] -> [4,4,1]
+[4,4,1] -> [4,4,2]
+[4,4,2] -> [3,4,2]
+[3,4,2] -> [3,4,1]
+				</pre>
+				
+				Graphic output:
+				<embed src="Results/Taskset12/robot_graph1.svg" width="800" height="820">
+				</main>		
+				
+				<nav id="sidebar">
+					<div class="widget">
+						<h4>Sets:</h4>
+						<ul>
+						<li><a href="tasks1.html">Task set 1</a></li>
+						<li><a href="tasks2.html">Task set 2</a></li>
+						<li><a href="tasks3.html">Task set 3</a></li>
+						<li><a href="tasks4.html">Task set 4</a></li>
+						<li><a href="tasks5.html">Task set 5</a></li>
+						<li><a href="tasks6.html">Task set 6</a></li>
+						<li><a href="tasks7.html">Task set 7</a></li>
+						<li><a href="tasks8.html">Task set 8</a></li>
+						<li><a href="tasks9.html">Task set 9</a></li>
+						<li><a href="tasks11.html">Task set 11</a></li>
+						<li><a href="tasks12.html">Task set 12</a></li>
+						<li><a href="tasks13.html">Task set 13</a></li>
+						</ul>
+					</div>
+				</nav>
+				
+				<div class="clr"></div>
+			</div>
+		</div>
+	
+		<div id="footerblurb">
+			<div id="footerblurb-inner"></div>
+		</div>
+	</div>
+</body>
+</html>

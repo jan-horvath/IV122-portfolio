@@ -199,11 +199,11 @@ void ellipse(Mat &pic, double x1, double y1, double x2, double y2, double maxDis
 					<br><br>
 					
 					<h3>Filled polygon</h3>
-					<i>line</i> - draws a line segment between two points
-					<i>fillPolygonRec</i> - recursively fills a polygon starting at point [x,y]
-					<i>invertColors</i> - swaps black and white for all pixels
-					<i>fillPolygon</i> - fills polygon using <i>fillPolygonRec</i> starting in the middle. If all corners have been coloured, the function calls <i>invertColors</i>.
-					<i>polygon</i> - draws a polygon using the array of points 
+					<i>line</i> - draws a line segment between two points<br>
+					<i>fillPolygonRec</i> - recursively fills a polygon starting at point [x,y]<br>
+					<i>invertColors</i> - swaps black and white for all pixels<br>
+					<i>fillPolygon</i> - fills polygon using <i>fillPolygonRec</i> starting in the middle. If all corners have been coloured, the function calls <i>invertColors</i>.<br>
+					<i>polygon</i> - draws a polygon using the array of points <br>
 					<pre class="code">
 void line(Mat &pic, double x1, double y1, double x2, double y2) {
 	double step = 1.0/(abs(y2 - y1) + abs(x2 - x1));

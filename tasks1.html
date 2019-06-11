@@ -108,9 +108,9 @@ cv::Mat Bpng(1000, 1000, CV_16UC3, cv::Scalar(52000, 52000, 52000));
 					<img src="Results/Taskset1/task1B.png" width="300" height="300"><br><br><br>
 					
 					
-					I have noticed, that the star can be created using two lines that connected to each other by multiple lines. These connecting lines' starting point lies on one of the lines and the endpoint lies on the other one. This process is repeated several times. Therefore, I have decided to create a function that draws a ladder in hope to get the desired effect.<br>
-					The points A,B and C,D define two main (usually longer) line segments of the ladder. The frequency parameter then defines the inverse of how many line segments should connect the AB and CD line segments.
-					The drawStar function then uses the drawLadder function repeatedly and computes the correct parameters.
+					I have noticed, that the star can be created using two lines that are connected to each other by multiple lines with even spacing between them (kind of like a ladder). Therefore, I have decided to create a function that draws a ladder but also allows me to set the two longest line segments (of the ladder) using 4 points. Repeatedly drawing this modified ladder structure achieves the desired effect.<br>
+					The points A,B and C,D define the two longest line segments of the ladder. The frequency parameter then defines the inverse of how many line segments should connect the AB and CD line segments.
+						The <i>drawStar</i> function then uses the drawLadder function repeatedly and computes the correct parameters.
 					<pre class="code">
 void drawLadder(Point A, Point B, Point C, Point D, SVGFile& svgFile, double frequency = 0) {
 	svgFile.addLine(A, B, COLORS[0], true);
@@ -141,19 +141,17 @@ void drawStar(SVGFile& svgFile, unsigned starPoints, double frequency = 0) {
 					Ulam's spiral with prime numbers. For divisor = 0, the function creates Ulam's spiral with primes. Otherwise, it produces Ulam's spiral with numbers divisible by divisor. The pictures show divisors of 5 (left) and primes (right)
 					
 					<pre class="code">
-void generateUlamsSpiral(SVGFile& svgFile, unsigned n, unsigned pixelRadius, unsigned divisor, double spacing = 0.02) {
+void generateUlamsSpiral(SVGFile& svgFile, unsigned n, unsigned pixelRadius,
+			unsigned divisor, double spacing = 0.02) {
     Point A = {0,0};
     Point B = {1,0};
     svgFile.addLine({A.X*spacing, A.Y*spacing}, {B.X*spacing, B.Y*spacing}, COLORS[0], true);
     A = B;
     for (size_t i = 2; i < n; ++i) {
-        unsigned checkCount = 0;
-        if ((A.X >= A.Y+1) && (A.Y > -A.X)) {B = {B.X, B.Y-1}; ++checkCount;}
-        if ((A.Y <= -A.X) && (A.X > A.Y)) {B = {B.X-1, B.Y}; ++checkCount;}
-        if ((A.X <= A.Y) && (A.Y < -A.X)) {B = {B.X, B.Y+1}; ++checkCount;}
-        if ((A.Y >= -A.X) && (A.Y+1 > A.X)) {B = {B.X+1, B.Y}; ++checkCount;}
-
-        assert(checkCount == 1);
+        if ((A.X >= A.Y+1) && (A.Y > -A.X)) {B = {B.X, B.Y-1};}
+        if ((A.Y <= -A.X) && (A.X > A.Y)) {B = {B.X-1, B.Y};}
+        if ((A.X <= A.Y) && (A.Y < -A.X)) {B = {B.X, B.Y+1};}
+        if ((A.Y >= -A.X) && (A.Y+1 > A.X)) {B = {B.X+1, B.Y};}
 
         svgFile.addLine({A.X*spacing, A.Y*spacing}, {B.X*spacing, B.Y*spacing}, COLORS[0], true);
 

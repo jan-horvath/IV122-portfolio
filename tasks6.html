@@ -205,7 +205,7 @@ void feigenbaum(Mat &pic, double xmin, double xmax, double rmin, double rmax) {
 					<embed src="Results/Taskset6/feigenbaum4.png" width="800" height="450"><br><br><br>
 					
 					<h3>Stochastic L-system</h3>
-					The L-System class contains: Turtle, transltion rules (pair of char and list of strings), drawing rules (pair of char and a function pointer). The translation rules are probabilistic. That is why the translation rules consist of pairs of char and a list of strings.<br>
+					The L-System class contains: Turtle, transltion rules (pair of char and list of strings), drawing rules (pair of char and a function pointer). The translation rules are probabilistic. That is why the translation rules consist of pairs of char and a list of strings (and not just strings).<br>
 					The system supports addition of translation rule and an addition of drawing rule for functions with upto (and including) 2 parameters. (I know I could have made this for any number of parameters, but I was not able to compile it.)<br>
 					The function <i>translate</i> rewrites the whole string <i>depth</i> times using translation rules.<br>
 					The function <i>drawString</i> draws the input string using rules for drawing.

@@ -1,0 +1,259 @@
+ <!DOCTYPE html>
+<!-- Template by html.am -->
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<title>IV122 portfolio</title>
+	<style type="text/css">
+		html, #page { padding:0; margin:0;}
+		body { margin:0; padding:0; width:100%; color:#000000; font:normal 12px/2.0em Sans-Serif;}
+		h1, h2, h3, h4, h5, h6 {color:darkblue;}
+		#page { background:#eee;}
+		#header, #footer, #top-nav, #content, #content #contentbar, #content #sidebar { margin:0; padding:0;}
+					
+		/* Logo */
+		#logo { padding:10px; width:auto; float:left;}
+		#logo h1 a, h1 a:hover { color:darkblue; text-decoration:none;}
+		#logo h1 span { color:#d3d3f9;}
+
+		/* Header */
+		#header { background:#eee; }
+		#header-inner { margin:0 auto; padding:10px; width:970px;background:#fff;}
+		
+		/* Feature */
+		.feature { background:#eee;padding:0;}
+		.feature-inner { margin:auto;padding:10px;width:970px;background:blue; }
+		.feature-inner h1 {color:#d3d3f9;font-size:32px;}
+		
+		/* Menu */
+		#top-nav { margin:0 auto; padding:0px 0 0; height:37px; float:right;}
+		#top-nav ul { list-style:none; padding:0; height:37px; float:left;}
+		#top-nav ul li { margin:0; padding:0 0 0 8px; float:left;}
+		#top-nav ul li a { display:block; margin:0; padding:8px 20px; color:blue; text-decoration:none;}
+		#top-nav ul li.active a, #top-nav ul li a:hover { color:#d3d3f9;}
+		
+		/* Content */
+		#content-inner { margin:0 auto; padding:10px; width:970px;background:#fff;}
+		#content #contentbar { margin:0; padding:0; float:right; width:830px;}
+		#content #contentbar .article { margin:0 0 24px; padding:0 20px 0 15px; }
+		#content #sidebar { padding:0; float:left; width:120px; background:#d3d3f9}
+		#content #sidebar .widget { margin:0 0 12px; padding:8px 8px 8px 13px;line-height:1.4em;}
+		#content #sidebar .widget h3 a { text-decoration:none;}
+		#content #sidebar .widget ul { margin:0; padding:0; list-style:none; color:#959595;}
+		#content #sidebar .widget ul li { margin:0;}
+		#content #sidebar .widget ul li { padding:4px 0; width:185px;}
+		#content #sidebar .widget ul li a { color:blue; text-decoration:none; margin-left:-16px; padding:4px 8px 4px 16px;}
+		#content #sidebar .widget ul li a:hover { color:#d3d3f9; font-weight:bold; text-decoration:none;}
+		
+		/* Footerblurb */
+		#footerblurb { background:#eee;color:blue;}
+		#footerblurb-inner { margin:0 auto; width:970px; padding:10px;background:#d3d3f9;border-bottom-right-radius:15px;border-bottom-left-radius:15px;}
+		#footerblurb .column { margin:0; text-align:justify; float:left;width:250px;padding:0 24px;}
+		
+		/* Footer */
+		#footer { background:#eee;}
+		#footer-inner { margin:auto; text-align:center; padding:12px; width:970px;}
+		#footer a {color:blue;text-decoration:none;}
+		
+		pre.code {
+			border: 2px solid gray;
+			padding-left: 10px;
+			color: #007700;
+			line-height: 1.5
+		}
+		
+		h3 {
+			font-size: 20px
+		}
+		
+		/* Clear both sides to assist with div alignment  */
+		.clr { clear:both; padding:0; margin:0; width:100%; font-size:0px; line-height:0px;}
+	</style>
+</head>
+<body>
+	<div id="page">
+		<header id="header">
+			<div id="header-inner">	
+				<div id="top-nav">
+					<ul>
+					<li><a href="index.html">INDEX</a></li>
+					</ul>
+				</div>
+				<div class="clr"></div>
+			</div>
+		</header>
+		<div class="feature">
+			<div class="feature-inner">
+			<h1>IV122 portfolio</h1>
+			<h2>Ján Horváth</h2>
+			<h2>433736</h2>
+			</div>
+		</div>
+	
+
+		<div id="content">
+			<div id="content-inner">
+			
+				<main id="contentbar">
+					<h3>Universal-ish approach to Newton fractal, Mandelbrot set and Julia sets</h3>
+					The functions Julia, Mandelbrot and Newton compute colour for the inputed complex number for the Julia, Mandelbrot sets and Newton fractal.
+					<pre class = "code">
+typedef complex&ltdouble> DComp;
+const DComp sol1(1,0);
+const DComp sol2(-0.5,sqrt(3)/2);
+const DComp sol3(-0.5,-sqrt(3)/2);
+
+const ushort MAX_COL = 65535;
+const auto BLACK = cv::Vec3w(0,0,0);
+const auto WHITE = cv::Vec3w(MAX_COL,MAX_COL,MAX_COL);
+
+Vec3w Newton(DComp cnum, unsigned iter) {
+	for (unsigned i = 0; i < iter; ++i) {
+		cnum = cnum - (pow(cnum, 3) - DComp(1))/(DComp(3) * pow(cnum,2));
+	}
+
+	double distances[3] = {abs(cnum-sol1), abs(cnum-sol2), abs(cnum-sol3)};
+	double maxDistance = *max_element(distances, distances + 3);
+	return Vec3w(
+			static_cast&ltushort>(floor(distances[0]/maxDistance * MAX_COL)),
+			static_cast&ltushort>(floor(distances[1]/maxDistance * MAX_COL)),
+			static_cast&ltushort>(floor(distances[2]/maxDistance * MAX_COL)));
+
+}
+
+Vec3w Mandelbrot(DComp cnum, unsigned iter) {
+	DComp z(0.0, 0.0);
+	for (unsigned i = 0; i < iter; ++i) {
+		z = z*z + cnum;
+	}
+
+	if (abs(z) < 2) {
+		return BLACK;
+	}
+	return WHITE;
+}
+
+Vec3w Julia(DComp cnum, DComp fixedC, unsigned iter) {
+	for (unsigned i = 0; i < iter; ++i) {
+		cnum = cnum*cnum + fixedC;
+	}
+
+	if (abs(cnum) < 2) {
+		return BLACK;
+	}
+	return WHITE;
+}
+
+template&ltchar ID>
+void Universal(Mat& pic, double minR, double maxR, double minI, double maxI,
+		unsigned iter = 30, DComp fixedC = {0.0, 0.0}) {
+	double R_increment = (maxR - minR)/pic.cols;
+	double I_increment = (maxI - minI)/pic.rows;
+
+	for (size_t y = 0; y < pic.rows; ++y) {
+		for (size_t x = 0; x < pic.cols; ++x) {
+			double X = minR + x*R_increment;
+			double Y = minI + y*I_increment;
+			if (ID == 'N') {
+				pic.at&ltVec3w>(y, x) = Newton(DComp{X, Y}, iter);
+			}
+			if (ID == 'M') {
+				pic.at&ltVec3w>(y, x) = Mandelbrot(DComp{X, Y}, iter);
+			}
+			if (ID == 'J') {
+				pic.at&ltVec3w>(y, x) = Julia(DComp{X, Y}, fixedC, iter);
+			}
+		}
+	}
+}</pre>
+					<embed src="Results/Taskset7/task7B1.png" width="500" height="500">
+					
+					<br>Each image was created using more and more iterations when computing the convergence, starting with 0. The colours (red, green and blue) represent the ratio of distances from all three solutions.
+					
+					<embed src="Results/Taskset7/Newton.gif" width="500" height="500">
+					
+					
+					<br><br>The following tranformation from 1D parameter to 2D point (complex number) was used to create the gif for Julia set. It simulates a space filling curve. I wanted to try the Hilber curve but this seemed much easier and it gets the job done.
+					
+					<pre class="code">
+DComp get2DPoint(unsigned side, double minX, double maxX, double minY, double maxY, unsigned parameter) {
+	assert(parameter < side*side);
+	double X = (maxX-minX) * static_cast&ltdouble>(parameter/side)/(side-1) + minX;
+	double Y = ((parameter/side) % 2 == 0) ?
+		((maxY - minY) * static_cast&ltdouble>(parameter % side)/(side-1) + minY)
+		: ((maxY - minY) * static_cast&ltdouble>((side-1) - (parameter % side))/(side-1) + minY);
+	return {X,Y};
+}</pre>
+					
+					<br><br>The following code creates the images of Julia sets, which were taken from rectangle where both X and Y coordinates were in the interval [0.2, 0.5]. Similiar approach was taken for creating the Newton fractal gif.
+					
+					<pre class="code">
+Mat picture1(1000, 1000, CV_16UC3, WHITE);
+Mat picture2(1000, 1000, CV_16UC3, WHITE);
+Mat picture3(1000, 1000, CV_16UC3, WHITE);
+Mat picture4(1000, 1000, CV_16UC3, WHITE);
+
+unsigned pointCount1D = 15;
+double minX = 0.2;
+double maxX = 0.5;
+double minY = 0.2;
+double maxY = 0.5;
+
+for (unsigned i = 0; i < 55; ++i) {
+	thread t1(Universal<'J'>, ref(picture1), -2, 2, -2, 2, 30,
+			  get2DPoint(pointCount1D, minX, maxX, minY, maxY, 4*i+0));
+	thread t2(Universal<'J'>, ref(picture2), -2, 2, -2, 2, 30,
+			  get2DPoint(pointCount1D, minX, maxX, minY, maxY, 4*i+1));
+	thread t3(Universal<'J'>, ref(picture3), -2, 2, -2, 2, 30,
+			  get2DPoint(pointCount1D, minX, maxX, minY, maxY, 4*i+2));
+	thread t4(Universal<'J'>, ref(picture4), -2, 2, -2, 2, 30,
+			  get2DPoint(pointCount1D, minX, maxX, minY, maxY, 4*i+3));
+
+	t1.join();
+	t2.join();
+	t3.join();
+	t4.join();
+
+	imwrite("Julia/" + to_string(4*i) + ".png", picture1);
+	imwrite("Julia/" + to_string(4*i+1) + ".png", picture2);
+	imwrite("Julia/" + to_string(4*i+2) + ".png", picture3);
+	imwrite("Julia/" + to_string(4*i+3) + ".png", picture4);
+
+	picture1.setTo(WHITE);
+	picture2.setTo(WHITE);
+	picture3.setTo(WHITE);
+	picture4.setTo(WHITE);
+}</pre>
+					<embed src="Results/Taskset7/Julia.gif" width="500" height="500">
+				</main>		
+				
+				<nav id="sidebar">
+					<div class="widget">
+						<h4>Sets:</h4>
+						<ul>
+						<li><a href="tasks1.html">Task set 1</a></li>
+						<li><a href="tasks2.html">Task set 2</a></li>
+						<li><a href="tasks3.html">Task set 3</a></li>
+						<li><a href="tasks4.html">Task set 4</a></li>
+						<li><a href="tasks5.html">Task set 5</a></li>
+						<li><a href="tasks6.html">Task set 6</a></li>
+						<li><a href="tasks7.html">Task set 7</a></li>
+						<li><a href="tasks8.html">Task set 8</a></li>
+						<li><a href="tasks9.html">Task set 9</a></li>
+						<li><a href="tasks11.html">Task set 11</a></li>
+						<li><a href="tasks12.html">Task set 12</a></li>
+						<li><a href="tasks13.html">Task set 13</a></li>
+						</ul>
+					</div>
+				</nav>
+				
+				<div class="clr"></div>
+			</div>
+		</div>
+	
+		<div id="footerblurb">
+			<div id="footerblurb-inner"></div>
+		</div>
+	</div>
+</body>
+</html>

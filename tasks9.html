@@ -110,8 +110,8 @@ void girlBoySimulation(unsigned families) {
 
     cout << "For " << families << " families (boys), the number of girls is "
     << girls << " ("  << 100*(double)girls/(boys+girls) << "%)" << endl;
-}
-
+}</pre>
+<pre class="code">
 Output:
 For 100 families (boys), the number of girls is 110 (52.381%)
 For 1000 families (boys), the number of girls is 1080 (51.9231%)
@@ -230,7 +230,7 @@ vector&ltdouble> CLT_Test(unsigned k, unsigned n, unsigned testNumber) {
     return move(output);
 }</pre>
 
-Thw following function creates a graph of a distribution achieved by the tests above.
+The following function creates a graph of a distribution achieved by the tests above. First it sorts the test output, then it goes through the sorted array and groups its items into non-intersecting intervals of size <i>groupSize</i>.
 <pre class="code">
 void plot_CLT_Test(svg::SVGFile &file, vector&ltdouble> &CLT_Test_Output, double groupSize) {
     double min = 0.0;

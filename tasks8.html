@@ -1,0 +1,353 @@
+ <!DOCTYPE html>
+<!-- Template by html.am -->
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<title>IV122 portfolio</title>
+	<style type="text/css">
+		html, #page { padding:0; margin:0;}
+		body { margin:0; padding:0; width:100%; color:#000000; font:normal 12px/2.0em Sans-Serif;}
+		h1, h2, h3, h4, h5, h6 {color:darkblue;}
+		#page { background:#eee;}
+		#header, #footer, #top-nav, #content, #content #contentbar, #content #sidebar { margin:0; padding:0;}
+					
+		/* Logo */
+		#logo { padding:10px; width:auto; float:left;}
+		#logo h1 a, h1 a:hover { color:darkblue; text-decoration:none;}
+		#logo h1 span { color:#d3d3f9;}
+
+		/* Header */
+		#header { background:#eee; }
+		#header-inner { margin:0 auto; padding:10px; width:970px;background:#fff;}
+		
+		/* Feature */
+		.feature { background:#eee;padding:0;}
+		.feature-inner { margin:auto;padding:10px;width:970px;background:blue; }
+		.feature-inner h1 {color:#d3d3f9;font-size:32px;}
+		
+		/* Menu */
+		#top-nav { margin:0 auto; padding:0px 0 0; height:37px; float:right;}
+		#top-nav ul { list-style:none; padding:0; height:37px; float:left;}
+		#top-nav ul li { margin:0; padding:0 0 0 8px; float:left;}
+		#top-nav ul li a { display:block; margin:0; padding:8px 20px; color:blue; text-decoration:none;}
+		#top-nav ul li.active a, #top-nav ul li a:hover { color:#d3d3f9;}
+		
+		/* Content */
+		#content-inner { margin:0 auto; padding:10px; width:970px;background:#fff;}
+		#content #contentbar { margin:0; padding:0; float:right; width:830px;}
+		#content #contentbar .article { margin:0 0 24px; padding:0 20px 0 15px; }
+		#content #sidebar { padding:0; float:left; width:120px; background:#d3d3f9}
+		#content #sidebar .widget { margin:0 0 12px; padding:8px 8px 8px 13px;line-height:1.4em;}
+		#content #sidebar .widget h3 a { text-decoration:none;}
+		#content #sidebar .widget ul { margin:0; padding:0; list-style:none; color:#959595;}
+		#content #sidebar .widget ul li { margin:0;}
+		#content #sidebar .widget ul li { padding:4px 0; width:185px;}
+		#content #sidebar .widget ul li a { color:blue; text-decoration:none; margin-left:-16px; padding:4px 8px 4px 16px;}
+		#content #sidebar .widget ul li a:hover { color:#d3d3f9; font-weight:bold; text-decoration:none;}
+		
+		/* Footerblurb */
+		#footerblurb { background:#eee;color:blue;}
+		#footerblurb-inner { margin:0 auto; width:970px; padding:10px;background:#d3d3f9;border-bottom-right-radius:15px;border-bottom-left-radius:15px;}
+		#footerblurb .column { margin:0; text-align:justify; float:left;width:250px;padding:0 24px;}
+		
+		/* Footer */
+		#footer { background:#eee;}
+		#footer-inner { margin:auto; text-align:center; padding:12px; width:970px;}
+		#footer a {color:blue;text-decoration:none;}
+		
+		pre.code {
+			border: 2px solid gray;
+			padding-left: 10px;
+			color: #007700;
+			line-height: 1.5
+		}
+		
+		h3 {
+			font-size: 20px
+		}
+		
+		/* Clear both sides to assist with div alignment  */
+		.clr { clear:both; padding:0; margin:0; width:100%; font-size:0px; line-height:0px;}
+	</style>
+</head>
+<body>
+	<div id="page">
+		<header id="header">
+			<div id="header-inner">	
+				<div id="top-nav">
+					<ul>
+					<li><a href="index.html">INDEX</a></li>
+					</ul>
+				</div>
+				<div class="clr"></div>
+			</div>
+		</header>
+		<div class="feature">
+			<div class="feature-inner">
+			<h1>IV122 portfolio</h1>
+			<h2>Ján Horváth</h2>
+			<h2>433736</h2>
+			</div>
+		</div>
+	
+
+		<div id="content">
+			<div id="content-inner">
+			
+				<main id="contentbar">
+					<h3>Transformations framework</h3>
+					The transformation matrix is represented as 1D array with information about number of rows and columns.<br>
+					The matrix multiplication (transformation application) can be seen below as well as the function for composition of transformations.
+					<pre class = "code">
+struct Matrix {
+	vector<double> _d;
+	size_t _rows;
+	size_t _cols;
+
+	Matrix(size_t rows, size_t cols) : _d(rows*cols, 0), _rows(rows), _cols(cols) {}
+
+	Matrix(initializer_list&ltdouble> list, size_t rows, size_t cols) : _d(list), _rows(rows), _cols(cols) {}
+
+	Matrix& operator*= (const Matrix& mat) {
+		assert(_cols == mat._rows);
+
+		Matrix product(_rows, mat._cols);
+		for (size_t row = 0; row < _rows; ++row) {
+			for (size_t col = 0; col < mat._cols; ++col) {
+
+				for (size_t i = 0; i < _cols; ++i) {
+					product._d.at(row*mat._cols + col) += 
+						_d.at(_cols*row+i) * mat._d.at(i*mat._cols+col);
+				}
+
+			}
+		}
+		*this = std::move(product);
+		return *this;
+	}
+
+	static Matrix composeTransformation(const vector&ltMatrix>& transformations) {
+		Matrix result = Matrix::identity();
+		for (const Matrix& transformation : transformations) {
+			result = transformation * result;
+		}
+		return move(result);
+	}
+};</pre>
+					<br>The following static functions create basic transformations:<br>
+					Identity - no input<br>
+					Translation - vector (X,Y)<br>
+					Scaling - parameters X and Y for scaling in X and Y directions (cX, cY if center needs to differ from the origin)<br>
+					Rotation - rotate by angle of size <i>alpha</i> degrees (cX, cY if center of rotation needs to differ from the origin) <br>
+					Reflexion - <i>axis</i> needs to be specified (0 for X axis, 1 for Y axis)<br>
+					Shear - parameter <i>s</i> for scaling and <i>axis</i> for the direction (cX, cY if center needs to differ from the origin)<br>
+					<pre class = "code">
+static Matrix identity() {
+	return Matrix({1,0,0,0,1,0,0,0,1}, 3, 3);
+}
+
+static Matrix translation(double X, double Y) {
+	return Matrix({1,0,X,0,1,Y, 0,0,1}, 3, 3);
+}
+
+static Matrix scaling(double X, double Y) {
+	return Matrix({X,0,0,0,Y,0,0,0,1}, 3, 3);
+}
+
+static Matrix scaling(double X, double Y, double cX, double cY) {
+	return composeTransformation({Matrix::translation(-cX, -cY),
+								  Matrix::scaling(X, Y),
+								  Matrix::translation(cX, cY)});
+}
+
+static Matrix rotation(double alpha) {
+	double a = toRad(alpha);
+	return Matrix({cos(a), -sin(a), 0, sin(a), cos(a), 0, 0, 0, 1}, 3, 3);
+}
+
+static Matrix rotation(double alpha, double cX, double cY) {
+	return composeTransformation({Matrix::translation(-cX, -cY),
+								  Matrix::rotation(alpha),
+								  Matrix::translation(cX, cY)});
+}
+
+static Matrix reflexion(unsigned axis) {
+	if (axis == 0) return Matrix({1,0,0,0,-1,0,0,0,1}, 3, 3);
+	if (axis == 1) return Matrix({-1,0,0,0,1,0,0,0,1}, 3, 3);
+	return identity();
+}
+
+static Matrix shear(double s, unsigned axis) {
+	if (axis == 0) return Matrix({1,s,0,0,1,0,0,0,1}, 3, 3);
+	if (axis == 1) return Matrix({1,0,0,s,1,0,0,0,1}, 3, 3);
+	return identity();
+}
+
+static Matrix shear(double s, unsigned axis, double cX, double cY) {
+	return composeTransformation({Matrix::translation(-cX, -cY),
+								  Matrix::shear(s, axis),
+								  Matrix::translation(cX, cY)});
+}</pre>	
+
+					<br>The objects are simply defined as list of line segments.<br>
+					Below, you can see a function for repeated application of the same transformation. The inputs are: object, transformation matrix and number of applications. The output is a list of objects.<br>
+					I have also created functions which produce a rectangle, star and an arrow, but they are not really interesting.<br>
+					
+					<pre class= "code">
+using Object = vector&ltLineSegment>;
+
+vector&ltObject> repeatedTransformation(Object obj, const Matrix& trans, unsigned iterations) {
+    vector&ltObject> objects;
+    objects.reserve(iterations);
+    for (unsigned i = 0; i < iterations; ++i) {
+        objects.emplace_back(obj);
+        obj = transformObject(obj, trans);
+    }
+    return move(objects);
+}</pre><br><br>
+
+					<h3>Some images created using the transformation framework</h3>
+					<pre class="code">
+SVGFile fileA1("task8A1.svg", 1000, 1000);
+    Object squareA1 = createRect(50, 50, 500, 450);
+    Matrix mA1 = Matrix::composeTransformation({Matrix::rotation(20, 500, 500),
+                                              Matrix::scaling(1.08, 1.08, 500, 500)});
+    auto objectsA = repeatedTransformation(squareA1, mA1, 30);
+    for (const Object& o : objectsA) {
+        fileA1.addObject(o);
+}</pre>
+					<embed src="Results/Taskset8/task8A1.svg" width="500" height="520"><br>
+					
+					<pre class="code">
+SVGFile fileA2("task8A2.svg", 1000, 1000);
+	Object squareA2 = createRect(400, 400, 500, 500);
+	Matrix mA2 = Matrix::composeTransformation({Matrix::rotation(5, 500, 500), 
+						Matrix::scaling(1.05, 0.9, 500, 500)});
+	auto objectsA2 = repeatedTransformation(squareA2, mA2, 90);
+	for (const Object& o : objectsA2) {
+		fileA2.addObject(o);
+}</pre>
+					<embed src="Results/Taskset8/task8A2.svg" width="500" height="520"><br>
+					
+					<pre class="code">
+SVGFile fileA3("task8A3.svg", 1000, 1000);
+    Object squareA3 = createRect(100, 100, 200, 500);
+    Matrix mA3 = Matrix::composeTransformation({Matrix::shear(-1.3, 0, 500, 500),
+                                               Matrix::rotation(10, 500, 500),
+                                               Matrix::scaling(0.9, 0.9, 500, 500)});
+
+    auto objectsA3 = repeatedTransformation(squareA3, mA3, 90);
+    for (const Object& o : objectsA3) {
+        fileA3.addObject(o);
+}</pre>
+					<embed src="Results/Taskset8/task8A3.svg" width="500" height="260"><br>
+					
+					<pre class="code">
+SVGFile fileA4("task8A4.svg", 1000, 1000);
+    Object line;
+    line.emplace_back(LineSegment({700, 94}, {700, 906}));
+
+    Matrix mA4 = Matrix::rotation(7.5, 500, 500);
+    auto objectsA4 = repeatedTransformation(line, mA4, 48);
+    for (const Object& o : objectsA4) {
+        fileA4.addObject(o);
+}</pre>
+					<embed src="Results/Taskset8/task8A4.svg" width="500" height="520"><br>
+					
+					<h3>Multiple Reduction Copy Machine</h3>
+					The following function performs the MRC operation. The input is an object, several transformations and the depth (iterations). The functions calls itself recursively by applying one of the transformations to the object for each transformation, until the maximum depth is reached. At that point, the function draws the object.
+					<pre class="code">
+void MRCM(SVGFile &file, const Object& object, const vector&ltMatrix>& transformations, unsigned iterations) {
+    if (iterations == 0) {
+        file.addObject(upscaleObject(object, file.m_width, file.m_height));
+        return;
+    }
+
+    for (const auto& t: transformations) {
+        MRCM(file, transformObject(object, t), transformations, iterations-1);
+    }
+}</pre><br><br>
+				The Sierpinski siblings - each sibling is created by repeatedly replacing one copy of the initial image with three. Their positions are fixed. Each copy is rotated by 0/90/180/270 degrees. Since there are three copies, this creates 4^3 = 64 combinations:
+				<pre class="code">
+for (unsigned i = 0; i < 64; ++i) {
+	SVGFile fileMRCM("MRCM/MRCM-Sierp" + to_string(i) + ".svg", 1000, 1000);
+	Object MRCM_sierp= createStar(0.4, 0.5, 0.5);
+	vector<Matrix> transformations;
+	transformations.emplace_back(Matrix::rotation((i / 16) * 90, 0.25, 0.25) 
+					* Matrix::scaling(0.5, 0.5));
+	transformations.emplace_back(Matrix::translation(0.25, 0.5) 
+					* Matrix::rotation((i /  4) * 90, 0.25, 0.25) 
+					* Matrix::scaling(0.5, 0.5));
+	transformations.emplace_back(Matrix::translation(0.5, 0) 
+					* Matrix::rotation((i %  4) * 90, 0.25, 0.25) 
+					* Matrix::scaling(0.5, 0.5));
+	MRCM(fileMRCM, MRCM_sierp, transformations, 7);
+}</pre>
+				<embed src="Results/Taskset8/Sierpinski_siblings.gif" width="800" height="820"><br><br>
+				
+				<h4>Fern</h4>
+				I have used the transformations from the slides to create a fern. I have created a fern using the MRCM as well as using an "infinite" approximation.
+				<pre class="code">
+SVGFile fileFern("MRCM-Fern.svg", 1000, 1000);
+    
+cv::Mat fern(1000, 1000, CV_16UC3, WHITE);
+
+Object arrow= createArrow(0.2, 0.4, 0.5, 0.5);
+
+vector&ltMatrix> transformations;
+transformations.emplace_back(Matrix({0.849, 0.037, 0.075, -0.037, 0.849, 0.183, 0, 0, 1},3,3));
+transformations.emplace_back(Matrix({0.197, -0.226, 0.4, 0.226, 0.197, 0.049, 0, 0, 1}, 3, 3));
+transformations.emplace_back(Matrix({-0.15, 0.283, 0.575, 0.26, 0.237, 0.084, 0, 0, 1}, 3, 3));
+transformations.emplace_back(Matrix({0, 0, 0.5, 0, 0.16, 0, 0, 0, 1}, 3, 3));
+
+MRCM(fileFern, arrow, transformations, 7); //create fern using MRCM
+
+approximatedInfiniteMRCM(fern, transformations, 5000000); //create fern using approximation
+cv::imwrite("MRCM-Fern.png", fern);</pre><br>
+				
+				The approximation takes the transformations and the number of iterations. Then a random point is generated and is repeatedly transformed using one of the random transformations. After every transformation, the point is drawn (several initial points are discarded). This is similiar to chaos game.
+				<pre class="code">
+void approximatedInfiniteMRCM(cv::Mat &file, const vector&ltMatrix>& transformations, unsigned iterations) {
+    svg::Point P(0.5, 0.5);
+    for (unsigned i = 0; i < iterations; ++i) {
+        if (i > iterations/100) {
+            file.at&ltcv::Vec3w>(P.Y * file.rows, P.X * file.cols) = BLACK;
+        }
+        P.transform(transformations.at(rand() % transformations.size()));
+    }
+}</pre>
+				<embed src="Results/Taskset8/MRCM-Fern.svg" width="800" height="820"><br><br>
+				<embed src="Results/Taskset8/MRCM-Fern.png" width="800" height="820"><br><br>
+				
+				</main>		
+				
+				<nav id="sidebar">
+					<div class="widget">
+						<h4>Sets:</h4>
+						<ul>
+						<li><a href="tasks1.html">Task set 1</a></li>
+						<li><a href="tasks2.html">Task set 2</a></li>
+						<li><a href="tasks3.html">Task set 3</a></li>
+						<li><a href="tasks4.html">Task set 4</a></li>
+						<li><a href="tasks5.html">Task set 5</a></li>
+						<li><a href="tasks6.html">Task set 6</a></li>
+						<li><a href="tasks7.html">Task set 7</a></li>
+						<li><a href="tasks8.html">Task set 8</a></li>
+						<li><a href="tasks9.html">Task set 9</a></li>
+						<li><a href="tasks11.html">Task set 11</a></li>
+						<li><a href="tasks12.html">Task set 12</a></li>
+						<li><a href="tasks13.html">Task set 13</a></li>
+						</ul>
+					</div>
+				</nav>
+				
+				<div class="clr"></div>
+			</div>
+		</div>
+	
+		<div id="footerblurb">
+			<div id="footerblurb-inner"></div>
+		</div>
+	</div>
+</body>
+</html>
